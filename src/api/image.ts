@@ -14,7 +14,7 @@ export const getConfigure = () => {
 };
 
 export const getImage = async (): Promise<TGetImage> => {
-  const res = await fetch(`${API_BASE_URL}${IMAGE_PATH}`, getConfigure());
+  const res = await fetch(`${API_BASE_URL}/${IMAGE_PATH}`, getConfigure());
   if (!res.ok) throw new Error('이미지 API 오류');
   return res.json();
 };
