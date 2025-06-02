@@ -25,9 +25,11 @@ export const addImageToCanvas = async (url: string) => {
   });
 
   fabricImg.set({
-    id: uuidv4(),
+    jeiId: uuidv4(),
     jeiRole: 'choice',
   });
+
+  console.log(fabricImg);
 
   canvas.add(fabricImg);
   canvas.setActiveObject(fabricImg);

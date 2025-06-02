@@ -1,16 +1,19 @@
 import EditorCanvas from './components/Canvas/EditorCanvas';
+import OptionPanel from './components/OptionPanel/OptionPanel';
 import SaveButton from './components/Toolbar/SaveButton';
 import ToolbarButtons from './components/Toolbar/ToolbarButtons';
 
-function App() {
+export default function App() {
   return (
-    <>
-      <h1 className='text-4xl'>Quiz Making Tool</h1>
-      <EditorCanvas />
-      <ToolbarButtons />
-      <SaveButton />
-    </>
+    <div className='flex gap-6 p-6'>
+      <div>
+        <EditorCanvas />
+        <div className='mt-2'>
+          <ToolbarButtons />
+          <SaveButton />
+        </div>
+      </div>
+      <OptionPanel />
+    </div>
   );
 }
-
-export default App;

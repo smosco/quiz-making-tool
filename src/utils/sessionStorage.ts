@@ -1,4 +1,5 @@
 import type { Canvas } from 'fabric';
+import { useEditorStore } from '../store/editorStore';
 
 const STORAGE_KEY = 'editorData';
 
@@ -21,17 +22,17 @@ interface StoredData {
 }
 
 export const saveEditorState = (canvas: Canvas) => {
-  // TODO: Canvas 클래스를 확장해서 직접 타입 오버라이드
+  // TODO: json에 jeiId, jeiRole이 저장 안됨
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const json = (canvas as any).toJSON(['jeiId', 'jeiRole']);
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const allChoiceIds = (json.objects as any[])
-    .filter((obj) => obj.jeiRole === 'choice')
-    .map((obj) => obj.jeiId);
+  const { options, mode } = useEditorStore.getState();
 
-  const dataToSave: StoredData = {
+  const optionIds = options.map((o) => o.id);
+  const answerIds = options.filter((o) => o.isAnswer).map((o) => o.id);
+
+  const dataToSave = {
     elements: {
-      objects: json.objects || [],
+      objects: json.objects,
       background: json.background || 'white',
     },
     interaction: {
@@ -39,14 +40,16 @@ export const saveEditorState = (canvas: Canvas) => {
       interactionType: 'choice',
       choices: [
         {
-          mode: 'unit', // 기본값 (이후 zustand 상태로 교체 가능)
-          options: allChoiceIds,
-          answer: [],
+          mode,
+          options: optionIds,
+          answer: answerIds,
           sounds: {},
         },
       ],
     },
   };
+
+  console.log('dataToSave', dataToSave);
 
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
 };
