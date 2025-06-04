@@ -1,7 +1,6 @@
 import { Canvas } from 'fabric';
 import { useEffect, useRef } from 'react';
 import { useEditorStore } from '../../store/editorStore';
-import { loadEditorState } from '../../utils/sessionStorage';
 
 let canvas: Canvas;
 export const getCanvasInstance = () => canvas;
@@ -34,18 +33,23 @@ export default function EditorCanvas() {
       }
     });
 
-    const saved = loadEditorState();
-    console.log('saved', saved?.elements);
-    if (saved?.elements) {
-      canvas.loadFromJSON(saved.elements, () => {
-        setTimeout(() => canvas.requestRenderAll(), 0);
+    // const saved = loadEditorState();
+    // fabric 데이터 복원
+    const fabricJson = sessionStorage.getItem('fabricData');
+    if (fabricJson) {
+      canvas.loadFromJSON(JSON.parse(fabricJson), () => {
+        canvas.requestRenderAll();
       });
     }
-    if (saved?.interaction?.choices?.[0]) {
-      const { options, answer, mode } = saved.interaction.choices[0];
+
+    // interaction 데이터 복원
+    const interactionJson = sessionStorage.getItem('interactionData');
+    if (interactionJson) {
+      const interaction = JSON.parse(interactionJson);
+      const { options, answer, mode } = interaction.choices[0];
       store.setMode(mode);
       store.setOptions(
-        options.map((id) => ({ id, isAnswer: answer.includes(id) })),
+        options.map((id: string) => ({ id, isAnswer: answer.includes(id) })),
       );
     }
 
