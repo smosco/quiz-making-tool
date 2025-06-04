@@ -7,14 +7,17 @@ export const getCanvasInstance = () => canvas;
 
 export default function EditorCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const addOption = useEditorStore((s) => s.addOption);
 
   const store = useEditorStore.getState();
+  const { options } = useEditorStore();
+
+  console.log(options);
 
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
 
+    // Fabric 캔버스 생성 및 설정
     canvas = new Canvas(el, {
       backgroundColor: 'white',
       preserveObjectStacking: true,
@@ -24,17 +27,24 @@ export default function EditorCanvas() {
     canvas.setDimensions({ width: 800, height: 500 });
     canvas.on('mouse:wheel', (opt) => opt.e.preventDefault());
 
-    // 객체 클릭 시 zustand에 추가
-    canvas.on('mouse:down', (e) => {
+    // 객체 선택 시 zustand의 selectedObjects에 반영
+    const setSelectedObjects = store.setSelectedObjects;
+
+    canvas.on('selection:created', (e) => {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      const target = e.target as any;
-      if (target?.jeiRole === 'choice' && target.jeiId) {
-        addOption(target.jeiId);
-      }
+      if (e.selected) setSelectedObjects(e.selected as any[]);
     });
 
-    // const saved = loadEditorState();
-    // fabric 데이터 복원
+    canvas.on('selection:updated', (e) => {
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      if (e.selected) setSelectedObjects(e.selected as any[]);
+    });
+
+    canvas.on('selection:cleared', () => {
+      setSelectedObjects([]);
+    });
+
+    // 세션에서 fabric JSON 복원
     const fabricJson = sessionStorage.getItem('fabricData');
     if (fabricJson) {
       canvas.loadFromJSON(JSON.parse(fabricJson), () => {
@@ -42,17 +52,17 @@ export default function EditorCanvas() {
       });
     }
 
-    // interaction 데이터 복원
+    // 세션에서 interaction 데이터 복원
     const interactionJson = sessionStorage.getItem('interactionData');
     if (interactionJson) {
       const interaction = JSON.parse(interactionJson);
-      const { options, answer, mode } = interaction.choices[0];
+      const { options, mode } = interaction.choices[0];
+
       store.setMode(mode);
-      store.setOptions(
-        options.map((id: string) => ({ id, isAnswer: answer.includes(id) })),
-      );
+      store.setOptions(options); // imageDataUrl 포함된 객체 배열 그대로
     }
 
+    // 언마운트 시 캔버스 해제
     return () => {
       canvas.dispose();
     };

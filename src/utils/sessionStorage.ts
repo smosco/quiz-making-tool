@@ -2,15 +2,13 @@ import type { Canvas } from 'fabric';
 import { useEditorStore } from '../store/editorStore';
 
 export const saveEditorState = (canvas: Canvas) => {
-  // fabric 데이터
+  // fabric 객체 JSON 저장
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const fabricJson = (canvas as any).toJSON(['jeiId', 'jeiRole']);
   sessionStorage.setItem('fabricData', JSON.stringify(fabricJson));
 
-  // interaction 등 별도 데이터
+  // 옵션 및 모드 저장
   const { options, mode } = useEditorStore.getState();
-  const optionIds = options.map((o) => o.id);
-  const answerIds = options.filter((o) => o.isAnswer).map((o) => o.id);
 
   const interactionData = {
     type: 'choice',
@@ -18,11 +16,11 @@ export const saveEditorState = (canvas: Canvas) => {
     choices: [
       {
         mode,
-        options: optionIds,
-        answer: answerIds,
+        options,
         sounds: {},
       },
     ],
   };
+
   sessionStorage.setItem('interactionData', JSON.stringify(interactionData));
 };

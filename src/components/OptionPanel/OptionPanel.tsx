@@ -1,11 +1,14 @@
 import { useEditorStore } from '../../store/editorStore';
+import OptionPlusButton from './OptionPlusButton';
 
 export default function OptionPanel() {
   const { options, toggleAnswer, removeOption, mode, setMode } =
     useEditorStore();
 
+  console.log(options);
+
   return (
-    <div className='p-4 border rounded w-[300px]'>
+    <div className='flex flex-col w-200 bg-gray-200 p-4 overflow-x-auto'>
       <div className='mb-3'>
         {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
         <label className='font-semibold mr-2'>선택 방식:</label>
@@ -19,16 +22,22 @@ export default function OptionPanel() {
         </select>
       </div>
 
-      <div className='space-y-2'>
+      <div className='flex gap-4'>
+        <OptionPlusButton />
         {options.map((opt) => (
           <div
             key={opt.id}
-            className='flex justify-between items-center border p-2 rounded'
+            className='flex flex-col h-60 p-4 rounded-xl bg-white'
           >
+            <img
+              src={opt.imageDataUrl || '/fallback.png'}
+              alt={`옵션 이미지 - ${opt.id}`}
+              className='w-24 h-24 object-contain border rounded mb-2 bg-white'
+            />
             <span className='truncate'>{opt.id}</span>
             <div className='flex items-center gap-2'>
               <input
-                type={mode === 'unit' ? 'radio' : 'checkbox'}
+                type='checkbox'
                 checked={opt.isAnswer}
                 onChange={() => toggleAnswer(opt.id)}
               />
