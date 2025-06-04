@@ -1,9 +1,9 @@
 import { Type } from 'lucide-react';
-import { addTextToCanvas } from '../../utils/fabricUtils';
+import { addTextboxToCanvas } from '../../utils/fabricUtils';
 
 function TextButton() {
   const handleAddText = () => {
-    addTextToCanvas();
+    addTextboxToCanvas();
   };
 
   return (

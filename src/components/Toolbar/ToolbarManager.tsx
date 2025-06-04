@@ -7,7 +7,7 @@ export default function ToolbarManager() {
   const { showTextToolbar, showGroupToolbar } = useToolbarStore();
 
   return (
-    <>
+    <div className='flex'>
       <DefaultToolbar />
       {/* {showTextToolbar && (
         <TextToolbar
@@ -19,14 +19,10 @@ export default function ToolbarManager() {
           fontColor='black'
           setFontColor={() => {}}
         />
-      )}
-      {showGroupToolbar && (
-        <GroupToolbar
-          onGroup={() => {}}
-          onUngroup={() => {}}
-          onAlign={() => {}}
-        />
       )} */}
-    </>
+      {/* {showGroupToolbar && ( */}
+      <GroupToolbar />
+      {/* )} */}
+    </div>
   );
 }
