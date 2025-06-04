@@ -1,0 +1,177 @@
+{
+  "elements": {
+    "objects": [
+      {
+        "type": "group",
+        "left": 181.02,
+        "top": 244.84,
+        "width": 101,
+        "height": 101,
+        "angle": -0.77,
+        "jeiRole": "choice",
+        "jeiId": "fe001ba7-383e-4f01-a1a1-04a373ff75f8",
+        "objects": [
+          {
+            "type": "rect",
+            "left": -50.5,
+            "top": -50.5,
+            "width": 100,
+            "height": 100,
+            "fill": "#ffffff",
+            "stroke": "transparent",
+            "strokeUniform": true,
+            "shadow": {
+              "color": "rgb(0,0,0,0.25)",
+              "blur": 4,
+              "offsetX": 0,
+              "offsetY": 0,
+              "affectStroke": false,
+              "nonScaling": true
+            },
+            "jeiRole": "choicebox",
+            "rx": 10,
+            "ry": 10
+          },
+          {
+            "type": "group",
+            "left": -23.59,
+            "top": -32.94,
+            "width": 164,
+            "height": 200,
+            "scaleX": 0.29,
+            "scaleY": 0.29,
+            "objects": "TI00000007.svg"
+          }
+        ]
+      },
+      {
+        "type": "group",
+        "left": 330.68,
+        "top": 244.16,
+        "width": 101,
+        "height": 101,
+        "jeiRole": "choice",
+        "jeiId": "887f5518-6ff6-47f1-a307-7730da3ca15b",
+        "objects": [
+          {
+            "type": "rect",
+            "left": -50.5,
+            "top": -50.5,
+            "width": 100,
+            "height": 100,
+            "fill": "#ffffff",
+            "stroke": "transparent",
+            "strokeUniform": true,
+            "shadow": {
+              "color": "rgb(0,0,0,0.25)",
+              "blur": 4,
+              "offsetX": 0,
+              "offsetY": 0,
+              "affectStroke": false,
+              "nonScaling": true
+            },
+            "jeiRole": "choicebox",
+            "rx": 10,
+            "ry": 10
+          },
+          {
+            "type": "group",
+            "left": -22.37,
+            "top": -33.67,
+            "width": 130,
+            "height": 200,
+            "scaleX": 0.34,
+            "scaleY": 0.34,
+            "objects": "TI00000008.svg"
+          }
+        ]
+      },
+      {
+        "type": "group",
+        "left": 478.71,
+        "top": 245.29,
+        "width": 99.46,
+        "height": 99.46,
+        "jeiRole": "choice",
+        "jeiId": "a1cddc85-a98a-4cfe-904c-56497dea873c",
+        "objects": [
+          {
+            "type": "rect",
+            "left": -49.73,
+            "top": -49.73,
+            "width": 98.46,
+            "height": 98.46,
+            "fill": "#ffffff",
+            "stroke": "transparent",
+            "strokeUniform": true,
+            "shadow": {
+              "color": "rgb(0,0,0,0.25)",
+              "blur": 4,
+              "offsetX": 0,
+              "offsetY": 0,
+              "affectStroke": false,
+              "nonScaling": true
+            },
+            "jeiRole": "choicebox",
+            "rx": 10,
+            "ry": 10
+          },
+          {
+            "type": "group",
+            "left": -26.79,
+            "top": -27.12,
+            "width": 200,
+            "height": 192,
+            "scaleX": 0.27,
+            "scaleY": 0.27,
+            "angle": 0.28,
+            "jeiRole": "choice",
+            "objects": "TI00000009.svg"
+          }
+        ]
+      },
+      {
+        "type": "textbox",
+        "left": 148.19,
+        "top": 161.19,
+        "width": 447.4,
+        "height": 29.38,
+        "fill": "#3c3c3c",
+        "fontFamily": "nanumsquarebold",
+        "fontSize": 26,
+        "text": "다음 중 다람쥐가 좋아하는 것을 고르시오.",
+        "styles": [],
+        "minWidth": 20,
+        "splitByGrapheme": false
+      },
+      {
+        "type": "group",
+        "left": 35.15,
+        "top": 184.14,
+        "width": 200,
+        "height": 200,
+        "jeiRole": "choice",
+        "jeiId": "a2571da8-9b60-4cb8-9c0a-01ebb5f6f9a1",
+        "objects": "TI00000011.svg"
+      }
+    ],
+    "background": "white"
+  },
+  "interaction": {
+    "type": "choice",
+    "interactionType": "choice",
+    "choices": [
+      {
+        "answer": ["fe001ba7-383e-4f01-a1a1-04a373ff75f8"],
+        "options": [
+          "fe001ba7-383e-4f01-a1a1-04a373ff75f8",
+          "887f5518-6ff6-47f1-a307-7730da3ca15b",
+          "a1cddc85-a98a-4cfe-904c-56497dea873c",
+          "a2571da8-9b60-4cb8-9c0a-01ebb5f6f9a1"
+        ],
+        "mode": "unit",
+        "sounds": {}
+      }
+    ]
+  }
+}
