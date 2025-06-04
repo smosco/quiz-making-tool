@@ -1,4 +1,11 @@
-import { ActiveSelection, Group, Rect, Textbox } from 'fabric';
+import {
+  ActiveSelection,
+  type Canvas,
+  type FabricObject,
+  Group,
+  Rect,
+  Textbox,
+} from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
 
@@ -132,4 +139,32 @@ export const ungroup = async () => {
       canvas.requestRenderAll();
     }, 30);
   }
+};
+
+// 캡처 함수
+export const captureSingleObject = (canvas: Canvas, target: FabricObject) => {
+  const others = canvas.getObjects().filter((obj) => obj !== target);
+
+  // 1. 나머지 객체 숨기기
+  others.forEach((obj) => obj.set({ opacity: 0 }));
+
+  // 2. 대상 객체의 바운딩 박스 계산
+  const { left, top, width, height } = target.getBoundingRect();
+
+  // 3. 해당 영역만 이미지로 캡처
+  const url = canvas.toDataURL({
+    left,
+    top,
+    width,
+    height,
+    multiplier: 1,
+  });
+
+  console.log(url);
+
+  // 4. 숨긴 객체 복원
+  others.forEach((obj) => obj.set({ opacity: 1 }));
+  canvas.renderAll();
+
+  return url;
 };
