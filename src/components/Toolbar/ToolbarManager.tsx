@@ -8,13 +8,8 @@ export default function ToolbarManager() {
 
   return (
     <>
-      <DefaultToolbar
-        onAddText={() => {}}
-        onAddRect={() => {}}
-        onAddCircle={() => {}}
-        onAddImage={() => {}}
-      />
-      {showTextToolbar && (
+      <DefaultToolbar />
+      {/* {showTextToolbar && (
         <TextToolbar
           fontSize={16}
           setFontSize={() => {}}
@@ -31,7 +26,7 @@ export default function ToolbarManager() {
           onUngroup={() => {}}
           onAlign={() => {}}
         />
-      )}
+      )} */}
     </>
   );
 }

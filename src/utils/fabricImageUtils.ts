@@ -16,12 +16,6 @@ export const addImageToCanvas = async (url: string) => {
   const fabricImg = new FabricImage(imgEl, {
     left: 100,
     top: 100,
-    scaleX: 0.4,
-    scaleY: 0.4,
-    objectCaching: true,
-    selectable: true,
-    hasControls: true,
-    hasBorders: true,
   });
 
   fabricImg.set({

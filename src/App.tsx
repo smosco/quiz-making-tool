@@ -1,7 +1,7 @@
 import EditorCanvas from './components/Canvas/EditorCanvas';
 import OptionPanel from './components/OptionPanel/OptionPanel';
 import SaveButton from './components/Toolbar/SaveButton';
-import ToolbarButtons from './components/Toolbar/ToolbarButtons';
+import ToolbarManager from './components/Toolbar/ToolbarManager';
 
 export default function App() {
   return (
@@ -9,8 +9,7 @@ export default function App() {
       <div>
         <EditorCanvas />
         <div className='mt-2'>
-          <ToolbarButtons />
-          <SaveButton />
+          <ToolbarManager />
         </div>
       </div>
       <OptionPanel />

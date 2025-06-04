@@ -1,3 +1,4 @@
+import { Save } from 'lucide-react';
 import { saveEditorState } from '../../utils/sessionStorage';
 import { getCanvasInstance } from '../Canvas/EditorCanvas';
 
@@ -10,9 +11,8 @@ export default function SaveButton() {
         saveEditorState(canvas);
         alert('저장 완료');
       }}
-      className='px-3 py-1 bg-blue-500 text-white rounded'
     >
-      저장
+      <Save size={32} />
     </button>
   );
 }

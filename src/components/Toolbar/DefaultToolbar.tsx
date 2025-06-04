@@ -1,34 +1,17 @@
-import type React from 'react';
+import ImageButton from './ImageButton';
+import RectButton from './RectButton';
+import SaveButton from './SaveButton';
+import TextButton from './TextButton';
 
-interface DefaultToolbarProps {
-  onAddText: () => void;
-  onAddRect: () => void;
-  onAddCircle: () => void;
-  onAddImage: () => void;
-}
-
-const DefaultToolbar: React.FC<DefaultToolbarProps> = ({
-  onAddText,
-  onAddRect,
-  onAddCircle,
-  onAddImage,
-}) => {
+function DefaultToolbar() {
   return (
-    <div className='flex items-center gap-2 p-2 bg-white shadow-sm border-b'>
-      <button type='button' onClick={onAddText}>
-        T
-      </button>
-      <button type='button' onClick={onAddRect}>
-        □
-      </button>
-      <button type='button' onClick={onAddCircle}>
-        ◯
-      </button>
-      <button type='button' onClick={onAddImage}>
-        🖼
-      </button>
+    <div className='flex items-center gap-2 p-2 bg-white'>
+      <SaveButton />
+      <TextButton />
+      <RectButton />
+      <ImageButton />
     </div>
   );
-};
+}
 
 export default DefaultToolbar;
