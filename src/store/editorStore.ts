@@ -1,24 +1,35 @@
+import type { FabricObject } from 'fabric';
 import { create } from 'zustand';
 
-interface OptionState {
+export interface OptionState {
   id: string;
   isAnswer: boolean;
+  imageDataUrl: string;
 }
+
+export type Selection = FabricObject & { jeiId: string; jeiRole: string }; // jeiId 강제 부여한 타입
 
 interface EditorStore {
   mode: 'unit' | 'multi';
-  options: OptionState[];
   setMode: (mode: 'unit' | 'multi') => void;
+
+  selectedObjects: Selection[];
+  setSelectedObjects: (selected: Selection[]) => void;
+
+  options: OptionState[];
   setOptions: (options: OptionState[]) => void;
   toggleAnswer: (id: string) => void;
-  addOption: (id: string) => void;
   removeOption: (id: string) => void;
 }
 
 export const useEditorStore = create<EditorStore>((set, get) => ({
   mode: 'unit',
-  options: [],
   setMode: (mode) => set({ mode }),
+
+  selectedObjects: [],
+  setSelectedObjects: (selected) => set({ selectedObjects: selected }),
+
+  options: [],
   setOptions: (options) => set({ options }),
   toggleAnswer: (id) => {
     const { options, mode } = get();
@@ -31,14 +42,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     );
     set({ options: updated });
   },
-  addOption: (id) => {
-    const options = get().options;
-    if (!options.find((o) => o.id === id)) {
-      set({ options: [...options, { id, isAnswer: false }] });
-    }
-  },
-  removeOption: (id) => {
-    const options = get().options.filter((o) => o.id !== id);
-    set({ options });
-  },
+  removeOption: (id) =>
+    set({ options: get().options.filter((o) => o.id !== id) }),
 }));
