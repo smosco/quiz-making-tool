@@ -4,9 +4,13 @@ import { usePreviewStore } from '../../store/usePreviewStore';
 import { updateVisualStyle } from '../../utils/previewUtils';
 
 export default function PreviewCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { selectedIds, submitted, mode, select } = usePreviewStore();
+  const canvasRef = useRef<HTMLCanvasElement>(null); // DOM 엘리먼트 참조
+  const fabricCanvasRef = useRef<Canvas | null>(null); // Fabric 인스턴스 참조
 
+  // zustand 상태 subscribe
+  const { selectedIds, submitted } = usePreviewStore();
+
+  // 초기 캔버스 세팅
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
@@ -17,11 +21,12 @@ export default function PreviewCanvas() {
       preserveObjectStacking: true,
     });
 
+    fabricCanvasRef.current = canvas;
     canvas.setDimensions({ width: 800, height: 500 });
 
+    // 세션 데이터 로드
     const fabricJson = sessionStorage.getItem('fabricData');
     const interactionJson = sessionStorage.getItem('interactionData');
-
     if (!fabricJson || !interactionJson) return;
 
     const interaction = JSON.parse(interactionJson);
@@ -41,45 +46,44 @@ export default function PreviewCanvas() {
     });
 
     canvas.loadFromJSON(JSON.parse(fabricJson), () => {
-      // 이미지 로딩 완료까지 약간의 시간 대기
+      // 이미지 등 비동기 요소가 반영될 수 있으므로 지연 렌더링
       setTimeout(() => {
         canvas.requestRenderAll();
 
-        const objs = canvas.getObjects();
-        console.log('객체 확인', objs);
-
-        objs.forEach((obj) => {
-          console.log('hello', obj.type);
+        canvas.getObjects().forEach((obj) => {
           if (obj.type !== 'group') return;
+
           const group = obj as Group & { jeiId: string; jeiRole: string };
+          if (group.jeiRole !== 'choice') return;
 
-          console.log(group, 'group', group.jeiRole);
-          if (group.jeiRole === 'choice') {
-            console.log('role', group.jeiRole);
-            group.set({
-              hoverCursor: 'pointer',
-              selectable: false,
-              hasControls: false,
-            });
+          group.set({ hoverCursor: 'pointer' });
 
-            group.on('mousedown', () => {
-              if (usePreviewStore.getState().submitted) return;
+          group.on('mousedown', () => {
+            const { submitted } = usePreviewStore.getState();
+            if (submitted) return;
 
-              const id = group.jeiId;
-              usePreviewStore.getState().select(id);
-              updateVisualStyle(canvas);
-            });
-          }
+            const id = group.jeiId;
+            usePreviewStore.getState().select(id);
+            updateVisualStyle(canvas);
+          });
         });
 
         updateVisualStyle(canvas);
-      }, 50); // 이미지 로딩 보장 시간
+      }, 50);
     });
 
     return () => {
       canvas.dispose();
+      fabricCanvasRef.current = null;
     };
   }, []);
+
+  // 상태 변화 시 시각적 스타일 업데이트
+  useEffect(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+    updateVisualStyle(canvas);
+  }, [selectedIds, submitted]);
 
   return <canvas ref={canvasRef} className='border border-gray-300' />;
 }
