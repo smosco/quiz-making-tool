@@ -53,7 +53,7 @@ export default function PreviewCanvas() {
         canvas.getObjects().forEach((obj) => {
           if (obj.type !== 'group') return;
 
-          const group = obj as Group & { jeiId: string; jeiRole: string };
+          const group = obj as Group;
           if (group.jeiRole !== 'choice') return;
 
           group.set({
@@ -68,8 +68,11 @@ export default function PreviewCanvas() {
             if (submitted) return;
 
             const id = group.jeiId;
-            usePreviewStore.getState().select(id);
-            updateVisualStyle(canvas);
+
+            if (id) {
+              usePreviewStore.getState().select(id);
+              updateVisualStyle(canvas);
+            }
           });
         });
 

@@ -1,6 +1,7 @@
 import EditorCanvas from './components/Canvas/EditorCanvas';
 import OptionPanel from './components/OptionPanel/OptionPanel';
 import ToolbarManager from './components/Toolbar/ToolbarManager';
+import './utils/setupFabric';
 
 export default function App() {
   return (

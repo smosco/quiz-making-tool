@@ -1,4 +1,4 @@
-import { Canvas } from 'fabric';
+import { Canvas, type FabricObject } from 'fabric';
 import { useEffect, useRef } from 'react';
 import { useEditorStore } from '../../store/editorStore';
 import useToolbarStore from '../../store/useToolbarStore';
@@ -32,9 +32,10 @@ export default function EditorCanvas() {
     // TODO(@한현): 이벤트 타입, selected 타입 임시로 any로 해놓음
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const handleSelectionChange = (e: any) => {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      const selected = (e.selected ?? []) as any[];
+      const selected = (e.selected ?? []) as FabricObject[];
       setSelectedObjects(selected);
+
+      console.log(selected);
 
       if (selected.length === 1) {
         const obj = selected[0];

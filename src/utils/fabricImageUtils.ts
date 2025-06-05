@@ -23,8 +23,6 @@ export const addImageToCanvas = async (url: string) => {
     jeiRole: 'choice',
   });
 
-  console.log(fabricImg);
-
   canvas.add(fabricImg);
   canvas.setActiveObject(fabricImg);
   canvas.requestRenderAll();

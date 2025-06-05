@@ -7,14 +7,12 @@ export interface OptionState {
   imageDataUrl: string;
 }
 
-export type Selection = FabricObject & { jeiId: string; jeiRole: string }; // jeiId 강제 부여한 타입
-
 interface EditorStore {
   mode: 'unit' | 'multi';
   setMode: (mode: 'unit' | 'multi') => void;
 
-  selectedObjects: Selection[];
-  setSelectedObjects: (selected: Selection[]) => void;
+  selectedObjects: FabricObject[];
+  setSelectedObjects: (selected: FabricObject[]) => void;
 
   options: OptionState[];
   setOptions: (options: OptionState[]) => void;

@@ -6,11 +6,13 @@ export const updateVisualStyle = (canvas: Canvas) => {
 
   canvas.getObjects().forEach((obj) => {
     if (obj.type !== 'group') return;
-    const group = obj as Group & { jeiId: string; jeiRole: string };
+    const group = obj as Group;
     if (group.jeiRole !== 'choice') return;
 
     const border = group._objects.find((o) => o.type === 'rect') as Rect;
     if (!border) return;
+
+    if (!group.jeiId) return;
 
     const isSelected = selectedIds.includes(group.jeiId);
     const isCorrect = correctIds.includes(group.jeiId);
