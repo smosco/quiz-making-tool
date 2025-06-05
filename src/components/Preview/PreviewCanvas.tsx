@@ -56,7 +56,12 @@ export default function PreviewCanvas() {
           const group = obj as Group & { jeiId: string; jeiRole: string };
           if (group.jeiRole !== 'choice') return;
 
-          group.set({ hoverCursor: 'pointer' });
+          group.set({
+            hoverCursor: 'pointer',
+            hasControls: false,
+            lockMovementX: true,
+            lockMovementY: true,
+          });
 
           group.on('mousedown', () => {
             const { submitted } = usePreviewStore.getState();
