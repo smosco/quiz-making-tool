@@ -4,25 +4,13 @@ import GroupToolbar from './GroupToolbar';
 import TextToolbar from './TextToolbar';
 
 export default function ToolbarManager() {
-  const { showTextToolbar, showGroupToolbar } = useToolbarStore();
+  const { toolbarType } = useToolbarStore();
 
   return (
     <div className='flex'>
       <DefaultToolbar />
-      {/* {showTextToolbar && (
-        <TextToolbar
-          fontSize={16}
-          setFontSize={() => {}}
-          isBold={false}
-          toggleBold={() => {}}
-          setFontFamily={() => {}}
-          fontColor='black'
-          setFontColor={() => {}}
-        />
-      )} */}
-      {/* {showGroupToolbar && ( */}
-      <GroupToolbar />
-      {/* )} */}
+      {toolbarType === 'text' && <TextToolbar />}
+      {toolbarType === 'group' && <GroupToolbar />}
     </div>
   );
 }

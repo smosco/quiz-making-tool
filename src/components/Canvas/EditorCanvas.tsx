@@ -1,6 +1,7 @@
 import { Canvas } from 'fabric';
 import { useEffect, useRef } from 'react';
 import { useEditorStore } from '../../store/editorStore';
+import useToolbarStore from '../../store/useToolbarStore';
 
 let canvas: Canvas;
 export const getCanvasInstance = () => canvas;
@@ -9,6 +10,7 @@ export default function EditorCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const store = useEditorStore.getState();
+  const { setToolbar } = useToolbarStore();
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -27,18 +29,34 @@ export default function EditorCanvas() {
     // 객체 선택 시 zustand의 selectedObjects에 반영
     const setSelectedObjects = store.setSelectedObjects;
 
-    canvas.on('selection:created', (e) => {
+    // TODO(@한현): 이벤트 타입, selected 타입 임시로 any로 해놓음
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const handleSelectionChange = (e: any) => {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      if (e.selected) setSelectedObjects(e.selected as any[]);
-    });
+      const selected = (e.selected ?? []) as any[];
+      setSelectedObjects(selected);
 
-    canvas.on('selection:updated', (e) => {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      if (e.selected) setSelectedObjects(e.selected as any[]);
-    });
+      if (selected.length === 1) {
+        const obj = selected[0];
+        if (obj.type === 'textbox') {
+          setToolbar('text');
+        } else if (obj.type === 'group') {
+          setToolbar('group');
+        } else {
+          setToolbar('default');
+        }
+      } else if (selected.length > 1) {
+        setToolbar('group');
+      } else {
+        setToolbar('default');
+      }
+    };
 
+    canvas.on('selection:created', handleSelectionChange);
+    canvas.on('selection:updated', handleSelectionChange);
     canvas.on('selection:cleared', () => {
       setSelectedObjects([]);
+      setToolbar('default');
     });
 
     // 세션에서 fabric JSON 복원
