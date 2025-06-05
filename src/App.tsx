@@ -1,6 +1,5 @@
 import EditorCanvas from './components/Canvas/EditorCanvas';
 import OptionPanel from './components/OptionPanel/OptionPanel';
-import SaveButton from './components/Toolbar/SaveButton';
 import ToolbarManager from './components/Toolbar/ToolbarManager';
 
 export default function App() {

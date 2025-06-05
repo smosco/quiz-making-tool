@@ -9,9 +9,6 @@ export default function EditorCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const store = useEditorStore.getState();
-  const { options } = useEditorStore();
-
-  console.log(options);
 
   useEffect(() => {
     const el = canvasRef.current;
