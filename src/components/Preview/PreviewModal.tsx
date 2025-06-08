@@ -1,38 +1,45 @@
-import PreviewCanvas from './PreviewCanvas';
-import Submitbar from './Submitbar';
+"use client"
+
+import { X, Play } from "lucide-react"
+import PreviewCanvas from "./PreviewCanvas"
+import SubmitBar from "./Submitbar"
 
 interface PreviewModalProps {
-  open: boolean;
-  onClose: () => void;
+  onClose: () => void
 }
 
-export default function PreviewModal({ open, onClose }: PreviewModalProps) {
-  if (!open) return null;
-
+export default function PreviewModal({ onClose }: PreviewModalProps) {
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-    <div
-      className='fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center'
-      onClick={onClose}
-    >
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-      <div
-        className='bg-white p-6 rounded-xl shadow-xl'
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-xl font-bold'>문제 프리뷰</h2>
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Play className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">문제 미리보기</h2>
+              <p className="text-sm text-gray-500">작성한 문제를 확인하고 테스트해보세요</p>
+            </div>
+          </div>
           <button
-            type='button'
             onClick={onClose}
-            className='text-gray-500 hover:text-black'
+            className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
+            title="닫기"
           >
-            close
+            <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
-        <PreviewCanvas />
-        <Submitbar />
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="bg-gray-50 rounded-xl p-6 mb-6">
+            <PreviewCanvas />
+          </div>
+          <SubmitBar />
+        </div>
       </div>
     </div>
-  );
+  )
 }
