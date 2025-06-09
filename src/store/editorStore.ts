@@ -1,5 +1,7 @@
-import type { FabricObject } from 'fabric';
+import type { Canvas, FabricObject } from 'fabric';
+import { debounce } from 'lodash';
 import { create } from 'zustand';
+import { captureSingleObject } from '../utils/fabricUtils';
 
 export interface OptionState {
   id: string;
@@ -18,6 +20,12 @@ interface EditorStore {
   setOptions: (options: OptionState[]) => void;
   toggleAnswer: (id: string) => void;
   removeOption: (id: string) => void;
+
+  updateOptionImage: (
+    optionId: string,
+    fabricObject: FabricObject,
+    canvas: Canvas,
+  ) => void;
 }
 
 export const useEditorStore = create<EditorStore>((set, get) => ({
@@ -42,4 +50,26 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
   removeOption: (id) =>
     set({ options: get().options.filter((o) => o.id !== id) }),
+
+  // TODO(@한현): 디바운스 걸지 말지 판단
+  updateOptionImage: debounce(async (optionId, fabricObject, canvas) => {
+    const { options } = get();
+    const optionIndex = options.findIndex((option) => option.id === optionId);
+
+    if (optionIndex === -1) return;
+
+    try {
+      const newImageDataUrl = captureSingleObject(canvas, fabricObject);
+
+      set((state) => ({
+        options: state.options.map((option, index) =>
+          index === optionIndex
+            ? { ...option, imageDataUrl: newImageDataUrl }
+            : option,
+        ),
+      }));
+    } catch (error) {
+      console.error('Failed to update option image:', error);
+    }
+  }, 10),
 }));
