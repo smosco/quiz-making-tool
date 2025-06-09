@@ -73,20 +73,18 @@ export default function OptionPanel() {
               {options.map((opt, index) => (
                 <div
                   key={opt.id}
-                  className='bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-colors'
+                  className='bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-colors'
                 >
                   <div className='flex items-start gap-3'>
                     {/* Option Image */}
-                    <div className='w-16 h-16 bg-white rounded-md border border-gray-200 flex items-center justify-center overflow-hidden'>
-                      <img
-                        src={
-                          opt.imageDataUrl ||
-                          '/placeholder.svg?height=64&width=64'
-                        }
-                        alt={`옵션 ${index + 1}`}
-                        className='w-full h-full object-contain'
-                      />
-                    </div>
+                    <img
+                      src={
+                        opt.imageDataUrl ||
+                        '/placeholder.svg?height=64&width=64'
+                      }
+                      alt={`옵션 ${index + 1}`}
+                      className='w-16 h-16 object-contain'
+                    />
 
                     {/* Option Content */}
                     <div className='flex-1 min-w-0'>
