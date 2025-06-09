@@ -100,45 +100,40 @@ export const group = async () => {
 };
 
 // 그룹해제
-// TODO(@한현): 그룹해제시 선택 안됨, 위치 크기 복원 안됨
-export const ungroup = async () => {
+// https://github.com/fabricjs/fabric.js/issues/9990 버그 리포트 참고
+export const ungroup = () => {
   const canvas = getCanvasInstance();
   if (!canvas) return;
+
   const activeObject = canvas.getActiveObject();
-  if (!activeObject) return;
+  if (!activeObject || activeObject.type !== 'group') return;
 
-  if (activeObject.type === 'group') {
-    // @ts-ignore
-    const objects = activeObject._objects;
-    const groupLeft = activeObject.left;
-    const groupTop = activeObject.top;
-    const groupScaleX = activeObject.scaleX;
-    const groupScaleY = activeObject.scaleY;
+  const group = activeObject as Group;
 
-    canvas.remove(activeObject);
+  // 그룹 제거
+  canvas.remove(group);
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    objects.forEach((obj: any) => {
-      obj.originX = 'left';
-      obj.originY = 'top';
-      obj.left = groupLeft + obj.left * groupScaleX;
-      obj.top = groupTop + obj.top * groupScaleY;
-      obj.angle = obj.angle + activeObject.angle;
-      obj.scaleX = obj.scaleX * groupScaleX;
-      obj.scaleY = obj.scaleY * groupScaleY;
-      obj.group = null;
-      obj.setCoords();
-      canvas.add(obj);
-    });
+  // 그룹 내부 객체 추출 및 그룹에서 분리
+  const objects = group.removeAll();
 
-    canvas.discardActiveObject();
-    canvas.renderAll();
-    setTimeout(() => {
-      const selection = new ActiveSelection(objects, { canvas });
-      canvas.setActiveObject(selection);
-      canvas.requestRenderAll();
-    }, 30);
-  }
+  // 각 객체를 캔버스에 다시 추가
+  canvas.add(...objects);
+
+  // 객체 상태 업데이트
+  objects.forEach((obj) => {
+    obj.group = undefined; // 수동으로 해제
+    obj.setCoords();
+  });
+
+  // 새롭게 선택 영역 지정
+  const selection = new ActiveSelection(objects, {
+    canvas,
+    originX: 'left',
+    originY: 'top',
+  });
+
+  canvas.setActiveObject(selection);
+  canvas.requestRenderAll();
 };
 
 // 캡처 함수
