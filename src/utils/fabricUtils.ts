@@ -132,6 +132,10 @@ export const ungroup = () => {
   // 그룹 제거
   canvas.remove(group);
 
+  // 그룹 자체의 옵션만 삭제
+  const { removeOption } = useEditorStore.getState();
+  removeOption(group.jeiId!);
+
   // 그룹 내부 객체 추출 및 그룹에서 분리
   const objects = group.removeAll();
 
