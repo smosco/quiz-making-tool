@@ -11,6 +11,7 @@ import {
   Type,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useEditorStore } from '../../store/editorStore';
 import { addRectToCanvas, addTextboxToCanvas } from '../../utils/fabricUtils';
 import { saveEditorState } from '../../utils/sessionStorage';
 import { getCanvasInstance } from '../Canvas/EditorCanvas';
@@ -21,6 +22,8 @@ import ToolbarButton from './ToolbarButton';
 function DefaultToolbar() {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+
+  const { removeOptionsByIds } = useEditorStore();
 
   const handleSave = () => {
     const canvas = getCanvasInstance();
@@ -49,10 +52,17 @@ function DefaultToolbar() {
   const handleDelete = () => {
     const canvas = getCanvasInstance();
     const activeObjects = canvas.getActiveObjects();
-    if (activeObjects.length > 0) {
-      activeObjects.forEach((obj) => canvas.remove(obj));
-      canvas.discardActiveObject();
-      canvas.requestRenderAll();
+
+    const objectIds = activeObjects
+      .map((obj) => obj.jeiId)
+      .filter((id): id is string => id !== undefined);
+
+    activeObjects.forEach((obj) => {
+      canvas.remove(obj);
+    });
+
+    if (objectIds.length > 0) {
+      removeOptionsByIds(objectIds); // 한 번의 상태 업데이트
     }
   };
 
