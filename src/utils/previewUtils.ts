@@ -1,6 +1,146 @@
 import type { Canvas, Group, Rect } from 'fabric';
+import { util } from 'fabric';
 import { usePreviewStore } from '../store/usePreviewStore';
 
+// 애니메이션 옵션 타입
+interface AnimationOptions {
+  duration?: number;
+  easing?: string;
+  onChange?: () => void;
+  onComplete?: () => void;
+}
+
+// 펄스 애니메이션 (선택 시)
+const createPulseAnimation = (group: Group, canvas: Canvas) => {
+  const originalScaleX = group.scaleX || 1;
+  const originalScaleY = group.scaleY || 1;
+
+  group.animate(
+    {
+      scaleX: originalScaleX * 1.1,
+      scaleY: originalScaleY * 1.1,
+    },
+    {
+      duration: 300,
+      easing: util.ease.easeOutQuad,
+      onChange: () => canvas.requestRenderAll(),
+      onComplete: () => {
+        group.animate(
+          {
+            scaleX: originalScaleX,
+            scaleY: originalScaleY,
+          },
+          {
+            duration: 200,
+            easing: util.ease.easeOutQuad,
+            onChange: () => canvas.requestRenderAll(),
+          },
+        );
+      },
+    },
+  );
+};
+
+// 성공 애니메이션 (정답 시)
+const createSuccessAnimation = (group: Group, canvas: Canvas) => {
+  const originalScaleX = group.scaleX || 1;
+  const originalScaleY = group.scaleY || 1;
+  const originalAngle = group.angle || 0;
+
+  // 1단계: 작아지기
+  group.animate(
+    {
+      scaleX: originalScaleX * 0.8,
+      scaleY: originalScaleY * 0.8,
+    },
+    {
+      duration: 150,
+      easing: util.ease.easeInQuad,
+      onChange: () => canvas.requestRenderAll(),
+      onComplete: () => {
+        // 2단계: 크게 튀어나오기 + 살짝 회전
+        group.animate(
+          {
+            scaleX: originalScaleX * 1.2,
+            scaleY: originalScaleY * 1.2,
+            angle: originalAngle + 5,
+          },
+          {
+            duration: 200,
+            easing: util.ease.easeOutBack,
+            onChange: () => canvas.requestRenderAll(),
+            onComplete: () => {
+              // 3단계: 원래 크기로 돌아가기
+              group.animate(
+                {
+                  scaleX: originalScaleX,
+                  scaleY: originalScaleY,
+                  angle: originalAngle,
+                },
+                {
+                  duration: 200,
+                  easing: util.ease.easeOutQuad,
+                  onChange: () => canvas.requestRenderAll(),
+                },
+              );
+            },
+          },
+        );
+      },
+    },
+  );
+};
+
+// 실패 애니메이션 (오답 시)
+const createFailAnimation = (group: Group, canvas: Canvas) => {
+  const originalLeft = group.left || 0;
+  const originalAngle = group.angle || 0;
+  const shakeDistance = 10;
+
+  // 좌우로 흔들기 애니메이션
+  let shakeCount = 0;
+  const maxShakes = 3;
+
+  const shake = () => {
+    if (shakeCount >= maxShakes) {
+      // 원래 위치로 복귀
+      group.animate(
+        {
+          left: originalLeft,
+          angle: originalAngle,
+        },
+        {
+          duration: 100,
+          easing: util.ease.easeOutQuad,
+          onChange: () => canvas.requestRenderAll(),
+        },
+      );
+      return;
+    }
+
+    const direction = shakeCount % 2 === 0 ? 1 : -1;
+
+    group.animate(
+      {
+        left: originalLeft + shakeDistance * direction,
+        angle: originalAngle + 3 * direction,
+      },
+      {
+        duration: 80,
+        easing: util.ease.easeInOutQuad,
+        onChange: () => canvas.requestRenderAll(),
+        onComplete: () => {
+          shakeCount++;
+          shake();
+        },
+      },
+    );
+  };
+
+  shake();
+};
+
+// 메인 함수: 시각적 스타일 업데이트 + 애니메이션
 export const updateVisualStyle = (canvas: Canvas) => {
   const { selectedIds, correctIds, submitted } = usePreviewStore.getState();
 
@@ -18,17 +158,82 @@ export const updateVisualStyle = (canvas: Canvas) => {
     const isCorrect = correctIds.includes(group.jeiId);
 
     if (!submitted) {
-      border.set('stroke', isSelected ? '#3B82F6' : '#D1D5DB'); // blue or gray
+      // 제출 전: 선택/미선택 상태
+      border.set('stroke', isSelected ? '#3B82F6' : '#D1D5DB');
+      border.set('opacity', 1);
+
+      if (isSelected) {
+        // 선택된 항목에 펄스 애니메이션
+        createPulseAnimation(group, canvas);
+      }
     } else {
+      // 제출 후: 정답/오답 결과 표시
       if (!isSelected) {
+        // 선택되지 않은 항목들
         border.set('stroke', '#E5E7EB');
         border.set('opacity', 0.4);
       } else {
-        border.set('stroke', isCorrect ? '#10B981' : '#EF4444'); // green or red
+        // 선택된 항목들
+        border.set('stroke', isCorrect ? '#10B981' : '#EF4444');
         border.set('opacity', 1);
+
+        // 애니메이션 실행
+        if (isCorrect) {
+          createSuccessAnimation(group, canvas);
+        } else {
+          createFailAnimation(group, canvas);
+        }
       }
     }
   });
 
   canvas.requestRenderAll();
+};
+
+// 추가: 전체 결과 애니메이션 (모든 문제를 맞췄을 때)
+export const createCelebrationAnimation = (canvas: Canvas) => {
+  const objects = canvas.getObjects();
+  let animationIndex = 0;
+
+  const animateNext = () => {
+    if (animationIndex >= objects.length) return;
+
+    const obj = objects[animationIndex];
+    if (obj.type === 'group' && (obj as Group).jeiRole === 'choice') {
+      const group = obj as Group;
+      const originalScaleX = group.scaleX || 1;
+      const originalScaleY = group.scaleY || 1;
+
+      // 순차적으로 통통 튀는 애니메이션
+      setTimeout(() => {
+        group.animate(
+          {
+            scaleY: originalScaleY * 1.3,
+          },
+          {
+            duration: 200,
+            easing: util.ease.easeOutQuad,
+            onChange: () => canvas.requestRenderAll(),
+            onComplete: () => {
+              group.animate(
+                {
+                  scaleY: originalScaleY,
+                },
+                {
+                  duration: 300,
+                  easing: util.ease.easeOutBounce,
+                  onChange: () => canvas.requestRenderAll(),
+                },
+              );
+            },
+          },
+        );
+      }, animationIndex * 100);
+    }
+
+    animationIndex++;
+    setTimeout(animateNext, 50);
+  };
+
+  animateNext();
 };

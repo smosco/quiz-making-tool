@@ -52,6 +52,7 @@ export default function PreviewCanvas() {
 
         canvas.getObjects().forEach((obj) => {
           if (obj.type !== 'group') return;
+          // TODO(@한현): 객체의 타입이 group이 아닌 경우에도 아래 set 설정 필요(group과는 살짝 다름)
 
           const group = obj as Group;
           if (group.jeiRole !== 'choice') return;
