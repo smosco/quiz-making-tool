@@ -29,7 +29,8 @@
         "noNonNullAssertion": "off"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "noStaticOnlyClass": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off"
