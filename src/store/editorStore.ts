@@ -20,6 +20,7 @@ interface EditorStore {
   setOptions: (options: OptionState[]) => void;
   toggleAnswer: (id: string) => void;
   removeOption: (id: string) => void;
+  removeOptionsByIds: (ids: string[]) => void;
 
   updateOptionImage: (
     optionId: string,
@@ -48,8 +49,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     );
     set({ options: updated });
   },
+
   removeOption: (id) =>
     set({ options: get().options.filter((o) => o.id !== id) }),
+  removeOptionsByIds: (ids) =>
+    set({ options: get().options.filter((o) => !ids.includes(o.id)) }),
 
   // TODO(@한현): 디바운스 걸지 말지 판단
   updateOptionImage: debounce(async (optionId, fabricObject, canvas) => {

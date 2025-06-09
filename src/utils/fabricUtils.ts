@@ -8,6 +8,7 @@ import {
 } from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
+import { useEditorStore } from '../store/editorStore';
 
 // 캔버스에 Textbox 추가
 export const addTextboxToCanvas = async () => {
@@ -68,6 +69,17 @@ export const group = async () => {
     // @ts-ignore: fabric.js 내부 프로퍼티 사용
     const objects = activeObject._objects;
 
+    // 그룹화될 객체들의 ID 수집
+    const objectIds: string[] = [];
+
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    objects.forEach((obj: any) => {
+      // 객체가 jeiId를 가지고 있다면 수집
+      if (obj.jeiId) {
+        objectIds.push(obj.jeiId);
+      }
+    });
+
     // 그룹 생성
     const group = new Group(
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -96,6 +108,13 @@ export const group = async () => {
     canvas.add(group);
     canvas.setActiveObject(group);
     canvas.requestRenderAll();
+
+    // 옵션에서 그룹화된 개별 객체들 제거
+    if (objectIds.length > 0) {
+      // TODO(@한현): 직접 스토어 호출하지 않도록 리팩토링하기
+      const { removeOptionsByIds } = useEditorStore.getState();
+      removeOptionsByIds(objectIds);
+    }
   }
 };
 
@@ -154,8 +173,6 @@ export const captureSingleObject = (canvas: Canvas, target: FabricObject) => {
     height,
     multiplier: 1,
   });
-
-  console.log(url);
 
   // 4. 숨긴 객체 복원
   others.forEach((obj) => obj.set({ opacity: 1 }));
