@@ -11,7 +11,6 @@ export default function EditorCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const store = useEditorStore.getState();
-  const { setToolbar } = useToolbarStore();
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -27,39 +26,53 @@ export default function EditorCanvas() {
     canvas.setDimensions({ width: 800, height: 500 });
     canvas.on('mouse:wheel', (opt) => opt.e.preventDefault());
 
-    // 객체 선택 시 zustand의 selectedObjects에 반영
-    const setSelectedObjects = store.setSelectedObjects;
+    const handleSelectionChange = () => {
+      // 약간의 지연을 주어 Fabric.js 내부 처리 완료 후 실행
+      setTimeout(() => {
+        const activeObjects = canvas.getActiveObjects();
+        const { setSelectedObjects } = useEditorStore.getState();
 
-    // TODO(@한현): 이벤트 타입, selected 타입 임시로 any로 해놓음
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    const handleSelectionChange = (e: any) => {
-      const selected = (e.selected ?? []) as FabricObject[];
-      setSelectedObjects(selected);
+        // console.log('=== Selection Change (After Timeout) ===');
+        // console.log('Active objects count:', activeObjects.length);
+        // console.log(
+        //   'Active objects:',
+        //   activeObjects.map((obj) => ({ type: obj.type, jeiId: obj.jeiId })),
+        // );
 
-      console.log(selected);
+        setSelectedObjects(activeObjects);
 
-      if (selected.length === 1) {
-        const obj = selected[0];
-        if (obj.type === 'textbox') {
-          setToolbar('text');
-        } else if (obj.type === 'group') {
+        // Toolbar 설정
+        const { setToolbar } = useToolbarStore.getState();
+        if (activeObjects.length === 1) {
+          const obj = activeObjects[0];
+          if (obj.type === 'textbox') {
+            setToolbar('text');
+          } else if (obj.type === 'group') {
+            setToolbar('group');
+          } else {
+            setToolbar('default');
+          }
+        } else if (activeObjects.length > 1) {
           setToolbar('group');
         } else {
           setToolbar('default');
         }
-      } else if (selected.length > 1) {
-        setToolbar('group');
-      } else {
+      }, 0); // 다음 이벤트 루프에서 실행
+    };
+
+    const handleSelectionCleared = () => {
+      setTimeout(() => {
+        const { setSelectedObjects } = useEditorStore.getState();
+        const { setToolbar } = useToolbarStore.getState();
+
+        setSelectedObjects([]);
         setToolbar('default');
-      }
+      }, 0);
     };
 
     canvas.on('selection:created', handleSelectionChange);
     canvas.on('selection:updated', handleSelectionChange);
-    canvas.on('selection:cleared', () => {
-      setSelectedObjects([]);
-      setToolbar('default');
-    });
+    canvas.on('selection:cleared', handleSelectionCleared);
 
     // 세션에서 fabric JSON 복원
     const fabricJson = sessionStorage.getItem('fabricData');
