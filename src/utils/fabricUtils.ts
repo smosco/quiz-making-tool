@@ -72,8 +72,7 @@ export const group = async () => {
     // 그룹화될 객체들의 ID 수집
     const objectIds: string[] = [];
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    objects.forEach((obj: any) => {
+    objects.forEach((obj: FabricObject) => {
       // 객체가 jeiId를 가지고 있다면 수집
       if (obj.jeiId) {
         objectIds.push(obj.jeiId);
@@ -111,7 +110,6 @@ export const group = async () => {
 
     // 옵션에서 그룹화된 개별 객체들 제거
     if (objectIds.length > 0) {
-      // TODO(@한현): 직접 스토어 호출하지 않도록 리팩토링하기
       const { removeOptionsByIds } = useEditorStore.getState();
       removeOptionsByIds(objectIds);
     }
