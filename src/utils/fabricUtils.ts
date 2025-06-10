@@ -8,7 +8,7 @@ import {
 } from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
-import { useEditorStore } from '../store/editorStore';
+import { useEditorStore } from '../store/useEditorStore';
 
 // 캔버스에 Textbox 추가
 export const addTextboxToCanvas = async () => {

@@ -1,5 +1,5 @@
 import type { Canvas } from 'fabric';
-import { getEditorState } from '../store/editorStore';
+import { getEditorState } from '../store/useEditorStore';
 
 export const saveEditorState = (canvas: Canvas) => {
   // fabric 객체 JSON으로 저장

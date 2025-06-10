@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { useSelectedObjects } from '../../store/editorStore';
+import { useSelectedObjects } from '../../store/useEditorStore';
 import { addOptionsFromSelectedObjects } from '../../utils/optionUtils';
 
 function OptionPlusButton() {

@@ -1,6 +1,6 @@
 import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
-import { getEditorState } from '../store/editorStore';
-import type { OptionState } from '../store/editorStore';
+import { getEditorState } from '../store/useEditorStore';
+import type { OptionState } from '../store/useEditorStore';
 import { captureSingleObject } from './fabricUtils';
 
 export async function addOptionsFromSelectedObjects() {

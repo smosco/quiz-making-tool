@@ -1,6 +1,6 @@
 import type { Canvas, FabricObject } from 'fabric';
 import { useEffect } from 'react';
-import { useEditorStore } from '../store/editorStore';
+import { useEditorStore } from '../store/useEditorStore';
 
 interface FabricEvent {
   target: FabricObject;

@@ -6,7 +6,7 @@ import {
   useEditorMode,
   useEditorStore,
   useOptions,
-} from '../../store/editorStore';
+} from '../../store/useEditorStore';
 import OptionPlusButton from './OptionPlusButton';
 
 export default function OptionPanel() {

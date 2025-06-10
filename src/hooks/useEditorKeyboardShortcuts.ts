@@ -1,7 +1,7 @@
 import { ActiveSelection } from 'fabric';
 import { useCallback } from 'react';
 import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
-import { useEditorStore } from '../store/editorStore';
+import { useEditorStore } from '../store/useEditorStore';
 import type { KeyboardCommand } from '../types/keyboard';
 import { group, ungroup } from '../utils/fabricUtils';
 import { useKeyboardShortcuts } from './useKeyboardShotcuts';

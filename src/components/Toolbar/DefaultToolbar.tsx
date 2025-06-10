@@ -11,7 +11,7 @@ import {
   Type,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useEditorStore } from '../../store/editorStore';
+import { useEditorStore } from '../../store/useEditorStore';
 import { addRectToCanvas, addTextboxToCanvas } from '../../utils/fabricUtils';
 import { saveEditorState } from '../../utils/sessionStorage';
 import { getCanvasInstance } from '../Canvas/EditorCanvas';

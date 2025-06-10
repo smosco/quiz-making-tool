@@ -1,7 +1,7 @@
 import { Canvas, type FabricObject } from 'fabric';
 import { useEffect, useRef } from 'react';
 import { useCanvasObjectSync } from '../../hooks/useCanvasEvents';
-import { getEditorState } from '../../store/editorStore';
+import { getEditorState } from '../../store/useEditorStore';
 import useToolbarStore from '../../store/useToolbarStore';
 
 let canvas: Canvas;
