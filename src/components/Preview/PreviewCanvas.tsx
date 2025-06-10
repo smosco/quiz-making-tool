@@ -1,5 +1,12 @@
 import { Canvas, type Group } from 'fabric';
 import { useEffect, useRef } from 'react';
+
+// 패브릭 그룹이 __clickHandlerRegistered을 포함하도록 확장
+declare module 'fabric' {
+  interface Group {
+    __clickHandlerRegistered?: boolean;
+  }
+}
 import {
   usePreviewStore,
   useSelectedIds,
@@ -46,13 +53,11 @@ export default function PreviewCanvas() {
     usePreviewStore.getState().init(choiceMode, correctIds);
 
     canvas.loadFromJSON(JSON.parse(fabricJson), () => {
-      // 이미지 등 비동기 요소가 반영될 수 있으므로 지연 렌더링
       setTimeout(() => {
         canvas.requestRenderAll();
 
         canvas.getObjects().forEach((obj) => {
           if (obj.type !== 'group') return;
-          // TODO(@한현): 객체의 타입이 group이 아닌 경우에도 아래 set 설정 필요(group과는 살짝 다름)
 
           const group = obj as Group;
           if (group.jeiRole !== 'choice') return;
@@ -64,16 +69,22 @@ export default function PreviewCanvas() {
             lockMovementY: true,
           });
 
-          group.on('mousedown', () => {
-            const { submitted, select } = usePreviewStore.getState();
-            if (submitted) return;
+          // 이벤트를 한 번만 등록하고 끝 이미 등록되어 있는지 확인
+          if (!group.__clickHandlerRegistered) {
+            group.on('mousedown', () => {
+              const { submitted, select } = usePreviewStore.getState();
+              if (submitted) return;
 
-            const id = group.jeiId;
-            if (id) {
-              select(id);
-              updateVisualStyle(canvas);
-            }
-          });
+              const id = group.jeiId;
+              if (id) {
+                select(id);
+                updateVisualStyle(canvas);
+              }
+            });
+
+            // 등록 플래그 설정
+            group.__clickHandlerRegistered = true;
+          }
         });
 
         updateVisualStyle(canvas);
@@ -86,7 +97,7 @@ export default function PreviewCanvas() {
     };
   }, []);
 
-  // 상태 변화 시 시각적 스타일 업데이트
+  // 상태 변화 시 시각적 스타일 업데이트만
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
