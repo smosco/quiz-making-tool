@@ -13,11 +13,27 @@ export default function ToolbarManager() {
     toolbarType === 'group' || selectedObjects.length >= 2;
 
   return (
-    <div className='flex'>
+    <div className='flex items-center'>
       <DefaultToolbar />
-      {toolbarType === 'text' && <TextToolbar />}
-      {toolbarType === 'group' && <GroupToolbar />}
-      {showAlignmentToolbar && <AlignmentToolbar />}
+
+      {toolbarType === 'text' && (
+        <>
+          <div className='w-px h-6 bg-gray-300 mx-1' />
+          <TextToolbar />
+        </>
+      )}
+      {toolbarType === 'group' && (
+        <>
+          <div className='w-px h-6 bg-gray-300 mx-1' />
+          <GroupToolbar />
+        </>
+      )}
+      {showAlignmentToolbar && (
+        <>
+          <div className='w-px h-6 bg-gray-300 mx-1' />
+          <AlignmentToolbar />
+        </>
+      )}
     </div>
   );
 }

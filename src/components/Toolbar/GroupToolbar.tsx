@@ -14,7 +14,7 @@ function GroupToolbar() {
   };
 
   return (
-    <div className='flex items-center gap-1 p-1 bg-gray-100 rounded-lg'>
+    <div className='flex items-center gap-1 p-1'>
       <ToolbarButton icon={Group} onClick={handleGroup} title='그룹 만들기' />
       <ToolbarButton icon={Ungroup} onClick={handleUngroup} title='그룹 해제' />
     </div>

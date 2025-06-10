@@ -25,7 +25,7 @@ export default function OptionPanel() {
   );
 
   return (
-    <div className='h-full flex flex-col bg-white'>
+    <div className='h-full flex flex-col'>
       {/* 헤더 */}
       <div className='p-6 border-b border-gray-200'>
         <div className='flex items-center gap-2 mb-4'>
@@ -34,9 +34,11 @@ export default function OptionPanel() {
         </div>
 
         {/* 모드 선택 */}
-        <div className='space-y-2'>
+        <div>
           {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-          <label className='text-sm font-medium text-gray-700'>선택 방식</label>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            선택 방식
+          </label>
           <div className='flex gap-2'>
             <button
               type='button'

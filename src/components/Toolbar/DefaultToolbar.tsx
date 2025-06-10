@@ -68,8 +68,8 @@ function DefaultToolbar() {
 
   return (
     <>
-      <div className='flex items-center gap-1 p-1 bg-gray-100 rounded-lg'>
-        {/* File Operations */}
+      <div className='flex items-center gap-1 p-1'>
+        {/* 저장, 프리뷰 */}
         <ToolbarButton icon={Save} onClick={handleSave} title='저장' />
         <ToolbarButton
           icon={Eye}
@@ -79,7 +79,7 @@ function DefaultToolbar() {
 
         <div className='w-px h-6 bg-gray-300 mx-1' />
 
-        {/* Add Elements */}
+        {/* 객체 추가 */}
         <ToolbarButton
           icon={Type}
           onClick={addTextboxToCanvas}
@@ -98,7 +98,7 @@ function DefaultToolbar() {
 
         <div className='w-px h-6 bg-gray-300 mx-1' />
 
-        {/* Layer Operations */}
+        {/* 앞, 뒤 가져오기 */}
         <ToolbarButton
           icon={ArrowUp}
           onClick={handleBringForward}
@@ -112,7 +112,7 @@ function DefaultToolbar() {
 
         <div className='w-px h-6 bg-gray-300 mx-1' />
 
-        {/* Delete Elements */}
+        {/* 객체 삭제 */}
         <ToolbarButton
           icon={Trash2}
           onClick={handleDelete}
@@ -121,7 +121,7 @@ function DefaultToolbar() {
         />
       </div>
 
-      {/* Modals */}
+      {/* 모달 */}
       {isImageModalOpen && (
         <ImageModal onClose={() => setIsImageModalOpen(false)} />
       )}
