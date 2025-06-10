@@ -1,14 +1,19 @@
-import { Canvas, type Group, Rect } from 'fabric';
+import { Canvas, type Group } from 'fabric';
 import { useEffect, useRef } from 'react';
-import { usePreviewStore } from '../../store/usePreviewStore';
+import {
+  usePreviewStore,
+  useSelectedIds,
+  useSubmitted,
+} from '../../store/usePreviewStore';
 import { updateVisualStyle } from '../../utils/previewUtils';
 
 export default function PreviewCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null); // DOM 엘리먼트 참조
-  const fabricCanvasRef = useRef<Canvas | null>(null); // Fabric 인스턴스 참조
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fabricCanvasRef = useRef<Canvas | null>(null);
 
-  // zustand 상태 subscribe
-  const { selectedIds, submitted } = usePreviewStore();
+  // 선택적 구독 - 필요한 상태만 개별적으로 구독
+  const selectedIds = useSelectedIds();
+  const submitted = useSubmitted();
 
   // 초기 캔버스 세팅
   useEffect(() => {
@@ -37,13 +42,8 @@ export default function PreviewCanvas() {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       .map((o: any) => o.id);
 
-    usePreviewStore.setState({
-      mode: choiceMode,
-      correctIds,
-      selectedIds: [],
-      submitted: false,
-      retryCount: 0,
-    });
+    // init 액션 사용
+    usePreviewStore.getState().init(choiceMode, correctIds);
 
     canvas.loadFromJSON(JSON.parse(fabricJson), () => {
       // 이미지 등 비동기 요소가 반영될 수 있으므로 지연 렌더링
@@ -65,13 +65,12 @@ export default function PreviewCanvas() {
           });
 
           group.on('mousedown', () => {
-            const { submitted } = usePreviewStore.getState();
+            const { submitted, select } = usePreviewStore.getState();
             if (submitted) return;
 
             const id = group.jeiId;
-
             if (id) {
-              usePreviewStore.getState().select(id);
+              select(id);
               updateVisualStyle(canvas);
             }
           });

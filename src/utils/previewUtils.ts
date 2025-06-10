@@ -2,14 +2,6 @@ import type { Canvas, Group, Rect } from 'fabric';
 import { util } from 'fabric';
 import { usePreviewStore } from '../store/usePreviewStore';
 
-// 애니메이션 옵션 타입
-interface AnimationOptions {
-  duration?: number;
-  easing?: string;
-  onChange?: () => void;
-  onComplete?: () => void;
-}
-
 // 펄스 애니메이션 (선택 시)
 const createPulseAnimation = (group: Group, canvas: Canvas) => {
   const originalScaleX = group.scaleX || 1;
@@ -190,7 +182,7 @@ export const updateVisualStyle = (canvas: Canvas) => {
   canvas.requestRenderAll();
 };
 
-// 추가: 전체 결과 애니메이션 (모든 문제를 맞췄을 때)
+// 전체 결과 애니메이션 (모든 문제를 맞췄을 때)
 export const createCelebrationAnimation = (canvas: Canvas) => {
   const objects = canvas.getObjects();
   let animationIndex = 0;
