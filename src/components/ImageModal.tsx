@@ -51,23 +51,34 @@ export default function ImageModal({ onClose }: Props) {
       .filter((img) => selected.has(img.imageId))
       .forEach((img) => {
         const url = getImageUrl(img.imageId, img.extension);
-        // ✅ extension 정보를 함께 전달
+        // extension 정보를 함께 전달
         addImageToCanvas(url, img.extension);
       });
     setSelected(new Set());
     onClose();
   };
 
-  // ✅ SVG 아이콘 표시 함수
+  // SVG 아이콘 표시 함수
   const isSVGImage = (extension: string) => {
     return extension.toLowerCase() === 'svg';
   };
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // 클릭된 요소가 backdrop(바깥쪽 div)인지 확인
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center p-4'>
-      <div className='bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden'>
-        {/* Header */}
-        <div className='flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50'>
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    <div
+      className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center p-4'
+      onClick={handleBackdropClick}
+    >
+      <div className='bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col'>
+        {/* 헤더 */}
+        <div className='flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50 flex-shrink-0'>
           <div className='flex items-center gap-3'>
             <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
               <ImageIcon className='w-5 h-5 text-blue-600' />
@@ -93,8 +104,8 @@ export default function ImageModal({ onClose }: Props) {
           </button>
         </div>
 
-        {/* Content */}
-        <div className='p-6'>
+        {/* 콘텐츠 - 스크롤 가능한 영역 */}
+        <div className='flex-1 overflow-y-auto p-6'>
           {loading ? (
             <div className='flex items-center justify-center py-12'>
               <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600' />
@@ -104,7 +115,7 @@ export default function ImageModal({ onClose }: Props) {
             </div>
           ) : (
             <>
-              {/* Image Grid */}
+              {/* 이미지 그리드 */}
               <div className='grid grid-cols-4 gap-4 mb-6'>
                 {currentImages.map((img) => {
                   const url = getImageUrl(img.imageId, img.extension);
@@ -122,7 +133,7 @@ export default function ImageModal({ onClose }: Props) {
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className='aspect-square bg-gray-50 flex items-center justify-center p-2 relative'>
+                      <div className='aspect-square bg-gray-50 flex items-center justify-center p-2 relative h-28 w-28'>
                         <img
                           src={url || '/placeholder.svg'}
                           alt={img.tags}
@@ -131,27 +142,27 @@ export default function ImageModal({ onClose }: Props) {
 
                         {/* SVG 표시 뱃지 */}
                         {isSVG && (
-                          <div className='absolute bottom-2 left-2 px-2 py-1 bg-green-500 text-white text-xs rounded-md font-medium'>
+                          <div className='absolute bottom-1 left-1 px-1 py-0.5 bg-green-500 text-white text-xs rounded-sm font-medium'>
                             SVG
                           </div>
                         )}
                       </div>
 
-                      {/* Selection Indicator */}
+                      {/* 선택됐는지 표시 */}
                       {isSelected && (
-                        <div className='absolute top-2 right-2 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center'>
-                          <Check className='w-4 h-4 text-white' />
+                        <div className='absolute top-1 right-1 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center'>
+                          <Check className='w-3 h-3 text-white' />
                         </div>
                       )}
 
-                      {/* Hover Overlay */}
+                      {/* 호버시 오버레이 */}
                       <div className='absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors' />
                     </div>
                   );
                 })}
               </div>
 
-              {/* Pagination */}
+              {/* 페이지네이션 */}
               <div className='flex items-center justify-between'>
                 <button
                   type='button'
@@ -186,8 +197,8 @@ export default function ImageModal({ onClose }: Props) {
           )}
         </div>
 
-        {/* Footer */}
-        <div className='flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50'>
+        {/* 푸터 */}
+        <div className='flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0'>
           <button
             type='button'
             onClick={onClose}

@@ -33,19 +33,7 @@ function SubmitBar() {
   };
 
   return (
-    <div className='flex flex-col items-center gap-4'>
-      {/* 상태 메시지 */}
-      {selectedIds.length === 0 && !submitted && (
-        <div className='flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200'>
-          <AlertCircle className='w-4 h-4' />
-          <span className='text-sm font-medium'>
-            {mode === 'unit'
-              ? '선택지를 하나 선택해주세요'
-              : '선택지를 하나 이상 선택해주세요'}
-          </span>
-        </div>
-      )}
-
+    <div className='flex flex-col items-center gap-4 p-5'>
       {/* 액션 버튼들 */}
       <div className='flex gap-3'>
         <button
@@ -76,7 +64,6 @@ function SubmitBar() {
           다시풀기 ({3 - retryCount}회 남음)
         </button>
       </div>
-
       {/* 재시도 횟수 표시 */}
       {retryCount > 0 && (
         <div className='text-xs text-gray-500'>시도 횟수: {retryCount}/3</div>
