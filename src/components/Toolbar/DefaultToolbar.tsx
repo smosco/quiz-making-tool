@@ -1,8 +1,10 @@
 'use client';
 
 import {
-  ArrowDown,
-  ArrowUp,
+  ChevronDown,
+  ChevronUp,
+  ChevronsDown,
+  ChevronsUp,
   Eye,
   ImageIcon,
   Save,
@@ -35,7 +37,7 @@ function DefaultToolbar() {
     const canvas = getCanvasInstance();
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
-      // canvas.bringForward(activeObject)
+      canvas.bringObjectForward(activeObject);
       canvas.requestRenderAll();
     }
   };
@@ -44,7 +46,25 @@ function DefaultToolbar() {
     const canvas = getCanvasInstance();
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
-      // canvas.sendBackwards(activeObject)
+      canvas.sendObjectBackwards(activeObject);
+      canvas.requestRenderAll();
+    }
+  };
+
+  const handleBringFront = () => {
+    const canvas = getCanvasInstance();
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      canvas.bringObjectToFront(activeObject);
+      canvas.requestRenderAll();
+    }
+  };
+
+  const handleSendBack = () => {
+    const canvas = getCanvasInstance();
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      canvas.sendObjectToBack(activeObject);
       canvas.requestRenderAll();
     }
   };
@@ -100,14 +120,24 @@ function DefaultToolbar() {
 
         {/* 앞, 뒤 가져오기 */}
         <ToolbarButton
-          icon={ArrowUp}
+          icon={ChevronUp}
           onClick={handleBringForward}
           title='앞으로 가져오기'
         />
         <ToolbarButton
-          icon={ArrowDown}
+          icon={ChevronDown}
           onClick={handleSendBackward}
           title='뒤로 보내기'
+        />
+        <ToolbarButton
+          icon={ChevronsUp}
+          onClick={handleBringFront}
+          title='맨앞으로 가져오기'
+        />
+        <ToolbarButton
+          icon={ChevronsDown}
+          onClick={handleSendBack}
+          title='맨뒤로 보내기'
         />
 
         <div className='w-px h-6 bg-gray-300 mx-1' />
