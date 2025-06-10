@@ -1,17 +1,13 @@
 import type { Canvas } from 'fabric';
-import { useEditorStore } from '../store/editorStore';
+import { getEditorState } from '../store/editorStore';
 
 export const saveEditorState = (canvas: Canvas) => {
-  // fabric 객체 JSON 저장
-  // TODO(@한현): toJSON으로 저장하면 jeiId, jeiRole이 저장이 안되던게 toObject로는 저장이 된다.
-  // 차이 비교해보기
+  // fabric 객체 JSON으로 저장
   const fabricJson = canvas.toObject(['jeiId', 'jeiRole']);
   sessionStorage.setItem('fabricData', JSON.stringify(fabricJson));
 
-  // console.log('fabricData', JSON.stringify(fabricJson));
-
-  // 옵션 및 모드 저장
-  const { options, mode } = useEditorStore.getState();
+  // 일반 함수 내부에서 훅 사용 불가 -> 선택적 구독 불가
+  const { options, mode } = getEditorState();
 
   const interactionData = {
     type: 'choice',

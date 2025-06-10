@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react';
-import { useEditorStore } from '../../store/editorStore';
+import { useSelectedObjects } from '../../store/editorStore';
 import { addOptionsFromSelectedObjects } from '../../utils/optionUtils';
 
 function OptionPlusButton() {
-  const { selectedObjects } = useEditorStore();
+  const selectedObjects = useSelectedObjects();
   const hasSelection = selectedObjects.length > 0;
 
   return (
