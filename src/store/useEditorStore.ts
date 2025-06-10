@@ -73,7 +73,7 @@ export const useEditorStore = create<EditorStore>()(
             console.error('Failed to update option image:', error);
           }
         },
-        100,
+        10,
       );
 
       return {

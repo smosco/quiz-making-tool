@@ -26,7 +26,10 @@ export const useCanvasObjectSync = (canvas: Canvas) => {
     canvas.on('object:rotating', handleObjectModified);
     canvas.on('object:moving', handleObjectModified);
     canvas.on('text:changed', handleObjectModified);
-    // TODO(@한현): 텍스트 폰트, 사이즈, 기울기, 굵기 변경 감지 이벤트 추가
+    // TODO(@한현): 텍스트 폰트, 사이즈, 굵기 변경 이벤트 감지
+    // canvas.on('text:editing:entered', handleObjectModified);
+    // canvas.on('text:editing:exited', handleObjectModified);
+    // canvas.on('text:selection:changed', handleObjectModified);
 
     return () => {
       canvas.off('object:modified', handleObjectModified);
@@ -34,6 +37,9 @@ export const useCanvasObjectSync = (canvas: Canvas) => {
       canvas.off('object:rotating', handleObjectModified);
       canvas.off('object:moving', handleObjectModified);
       canvas.off('text:changed', handleObjectModified);
+      // canvas.off('text:editing:entered', handleObjectModified);
+      // canvas.off('text:editing:exited', handleObjectModified);
+      // canvas.off('text:selection:changed', handleObjectModified);
     };
   }, [canvas, updateOptionImage]);
 };
