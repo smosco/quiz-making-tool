@@ -83,7 +83,22 @@ export const useEditorStore = create<EditorStore>()(
         options: [],
 
         // 액션들
-        setMode: (mode) => set({ mode }),
+        setMode: (mode) => {
+          set((state) => {
+            // multi에서 unit으로 변경될 때 모든 옵션의 isAnswer를 false로 초기화
+            if (state.mode === 'multi' && mode === 'unit') {
+              return {
+                mode,
+                options: state.options.map((option) => ({
+                  ...option,
+                  isAnswer: false,
+                })),
+              };
+            }
+            // 그 외의 경우는 모드만 변경
+            return { mode };
+          });
+        },
 
         setSelectedObjects: (selected) => set({ selectedObjects: selected }),
 
