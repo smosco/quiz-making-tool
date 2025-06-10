@@ -76,7 +76,8 @@ export const useEditorKeyboardShortcuts = () => {
         top: (cloned.top || 0) + 10,
         evented: true,
         jeiId: uuidv4(),
-        jeiRole: 'choice',
+        // 클론시 jeiRole이 choicebox인 경우만 유지, choice 또는 없던 경우는 속성 제거
+        jeiRole: cloned.jeiRole === 'choicebox' ? 'choicebox' : undefined,
       });
 
       // 그룹 객체나 ActiveSelection 처리

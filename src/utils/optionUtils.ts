@@ -14,6 +14,10 @@ export async function addOptionsFromSelectedObjects() {
   for (const obj of selectedObjects) {
     const id = obj.jeiId;
     if (!id || options.find((o) => o.id === id)) continue;
+
+    obj.set({
+      jeiRole: 'choice',
+    });
     const imageDataUrl = captureSingleObject(canvas, obj);
     newOptions.push({ id, isAnswer: false, imageDataUrl });
   }

@@ -31,7 +31,6 @@ const addSVGToCanvas = async (url: string) => {
       left: 100,
       top: 100,
       jeiId: uuidv4(),
-      jeiRole: 'choice',
     });
 
     // 원본 크기 정보 가져오기
@@ -104,7 +103,6 @@ const addRasterImageToCanvas = async (url: string) => {
       left: 100,
       top: 100,
       jeiId: uuidv4(),
-      jeiRole: 'choice',
     });
 
     canvas.add(img);

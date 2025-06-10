@@ -22,7 +22,6 @@ export const addTextboxToCanvas = async () => {
 
   fabricTextbox.set({
     jeiId: uuidv4(),
-    jeiRole: 'choice',
   });
 
   canvas.add(fabricTextbox);
@@ -49,7 +48,7 @@ export const addRectToCanvas = async () => {
 
   fabricRect.set({
     jeiId: uuidv4(),
-    jeiRole: 'choice',
+    jeiRole: 'choicebox',
   });
 
   canvas.add(fabricRect);
@@ -95,7 +94,6 @@ export const group = async () => {
 
     group.set({
       jeiId: uuidv4(),
-      jeiRole: 'choice',
     });
 
     // 기존 객체와 activeSelection을 캔버스에서 제거
