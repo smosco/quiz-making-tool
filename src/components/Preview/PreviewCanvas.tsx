@@ -57,6 +57,11 @@ export default function PreviewCanvas() {
         canvas.requestRenderAll();
 
         canvas.getObjects().forEach((obj) => {
+          obj.set({
+            selectable: false,
+          });
+
+          // TODO(@한현): jeiRole로 구분을 해야한다.
           if (obj.type !== 'group') return;
 
           const group = obj as Group;
@@ -64,9 +69,6 @@ export default function PreviewCanvas() {
 
           group.set({
             hoverCursor: 'pointer',
-            hasControls: false,
-            lockMovementX: true,
-            lockMovementY: true,
           });
 
           // 이벤트를 한 번만 등록하고 끝 이미 등록되어 있는지 확인
