@@ -27,6 +27,12 @@ export default function PreviewCanvas() {
     const el = canvasRef.current;
     if (!el) return;
 
+    // 이미 초기화된 캔버스가 있다면 먼저 정리
+    if (fabricCanvasRef.current) {
+      fabricCanvasRef.current.dispose();
+      fabricCanvasRef.current = null;
+    }
+
     const canvas = new Canvas(el, {
       backgroundColor: 'white',
       selection: false,
@@ -39,63 +45,78 @@ export default function PreviewCanvas() {
     // 세션 데이터 로드
     const fabricJson = sessionStorage.getItem('fabricData');
     const interactionJson = sessionStorage.getItem('interactionData');
-    if (!fabricJson || !interactionJson) return;
 
-    const interaction = JSON.parse(interactionJson);
-    const { options, mode: choiceMode } = interaction.choices[0];
-    const correctIds = options
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      .filter((o: any) => o.isAnswer)
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      .map((o: any) => o.id);
+    // fabricJson이 없는 경우 빈 캔버스로 초기화
+    if (!fabricJson || !interactionJson) {
+      canvas.requestRenderAll();
+      return () => {
+        canvas.dispose();
+        fabricCanvasRef.current = null;
+      };
+    }
 
-    // init 액션 사용
-    usePreviewStore.getState().init(choiceMode, correctIds);
+    try {
+      const interaction = JSON.parse(interactionJson);
+      const { options, mode: choiceMode } = interaction.choices[0];
+      const correctIds = options
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        .filter((o: any) => o.isAnswer)
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        .map((o: any) => o.id);
 
-    canvas.loadFromJSON(JSON.parse(fabricJson), () => {
-      setTimeout(() => {
-        canvas.requestRenderAll();
+      // init 액션 사용
+      usePreviewStore.getState().init(choiceMode, correctIds);
 
-        canvas.getObjects().forEach((obj) => {
-          obj.set({
-            selectable: false,
-          });
+      canvas.loadFromJSON(JSON.parse(fabricJson), () => {
+        setTimeout(() => {
+          canvas.requestRenderAll();
 
-          // TODO(@한현): jeiRole로 구분을 해야한다.
-          if (obj.type !== 'group') return;
-
-          const group = obj as Group;
-          if (group.jeiRole !== 'choice') return;
-
-          group.set({
-            hoverCursor: 'pointer',
-          });
-
-          // 이벤트를 한 번만 등록하고 끝 이미 등록되어 있는지 확인
-          if (!group.__clickHandlerRegistered) {
-            group.on('mousedown', () => {
-              const { submitted, select } = usePreviewStore.getState();
-              if (submitted) return;
-
-              const id = group.jeiId;
-              if (id) {
-                select(id);
-                updateVisualStyle(canvas);
-              }
+          canvas.getObjects().forEach((obj) => {
+            obj.set({
+              selectable: false,
             });
 
-            // 등록 플래그 설정
-            group.__clickHandlerRegistered = true;
-          }
-        });
+            if (obj.type !== 'group') return;
 
-        updateVisualStyle(canvas);
-      }, 50);
-    });
+            const group = obj as Group;
+            if (group.jeiRole !== 'choice') return;
+
+            group.set({
+              hoverCursor: 'pointer',
+            });
+
+            // 이벤트를 한 번만 등록하고 끝 이미 등록되어 있는지 확인
+            if (!group.__clickHandlerRegistered) {
+              group.on('mousedown', () => {
+                const { submitted, select } = usePreviewStore.getState();
+                if (submitted) return;
+
+                const id = group.jeiId;
+                if (id) {
+                  select(id);
+                  updateVisualStyle(canvas);
+                }
+              });
+
+              // 등록 플래그 설정
+              group.__clickHandlerRegistered = true;
+            }
+          });
+
+          updateVisualStyle(canvas);
+        }, 50);
+      });
+    } catch (error) {
+      console.error('Failed to load canvas data:', error);
+      // 에러 발생 시에도 빈 캔버스 렌더링
+      canvas.requestRenderAll();
+    }
 
     return () => {
-      canvas.dispose();
-      fabricCanvasRef.current = null;
+      if (fabricCanvasRef.current) {
+        fabricCanvasRef.current.dispose();
+        fabricCanvasRef.current = null;
+      }
     };
   }, []);
 
