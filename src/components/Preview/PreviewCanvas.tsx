@@ -1,5 +1,6 @@
 import { Canvas, type Group } from 'fabric';
 import { useEffect, useRef } from 'react';
+import type { OptionState } from '../../store/useEditorStore';
 
 // 패브릭 그룹이 __clickHandlerRegistered을 포함하도록 확장
 declare module 'fabric' {
@@ -59,10 +60,8 @@ export default function PreviewCanvas() {
       const interaction = JSON.parse(interactionJson);
       const { options, mode: choiceMode } = interaction.choices[0];
       const correctIds = options
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        .filter((o: any) => o.isAnswer)
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        .map((o: any) => o.id);
+        .filter((option: OptionState) => option.isAnswer)
+        .map((option: OptionState) => option.id);
 
       // init 액션 사용
       usePreviewStore.getState().init(choiceMode, correctIds);

@@ -97,8 +97,7 @@ export const group = async () => {
     });
 
     // 기존 객체와 activeSelection을 캔버스에서 제거
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    objects.forEach((obj: any) => canvas.remove(obj));
+    objects.forEach((obj: FabricObject) => canvas.remove(obj));
     canvas.remove(activeObject);
 
     // 그룹을 캔버스에 추가
