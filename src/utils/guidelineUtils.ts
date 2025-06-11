@@ -91,7 +91,12 @@ export const handleObjectMoving = (canvas: Canvas, e: any) => {
       canvas.getHeight(),
     );
     addGuideline(canvas, verticalLine);
-    movingObj.left = canvasCenter.x - movingObj.getScaledWidth() / 2;
+
+    // 회전된 객체도 고려한 중앙 정렬
+    const currentCenter = movingObj.getCenterPoint();
+    movingObj.set({
+      left: movingObj.left + (canvasCenter.x - currentCenter.x),
+    });
   }
 
   if (Math.abs(objCenter.y - canvasCenter.y) < SNAP_THRESHOLD) {
@@ -102,7 +107,12 @@ export const handleObjectMoving = (canvas: Canvas, e: any) => {
       canvas.getHeight(),
     );
     addGuideline(canvas, horizontalLine);
-    movingObj.top = canvasCenter.y - movingObj.getScaledHeight() / 2;
+
+    // 회전된 객체도 고려한 중앙 정렬
+    const currentCenter = movingObj.getCenterPoint();
+    movingObj.set({
+      top: movingObj.top + (canvasCenter.y - currentCenter.y),
+    });
   }
 
   // 다른 객체들과의 정렬 체크
@@ -129,7 +139,12 @@ export const handleObjectMoving = (canvas: Canvas, e: any) => {
         },
       );
       addGuideline(canvas, verticalLine);
-      movingObj.left = otherCenter.x - movingObj.getScaledWidth() / 2;
+
+      // 회전된 객체도 고려한 중앙 정렬
+      const currentCenter = movingObj.getCenterPoint();
+      movingObj.set({
+        left: movingObj.left + (otherCenter.x - currentCenter.x),
+      });
     }
 
     // 수평 중앙 정렬
@@ -146,7 +161,12 @@ export const handleObjectMoving = (canvas: Canvas, e: any) => {
         },
       );
       addGuideline(canvas, horizontalLine);
-      movingObj.top = otherCenter.y - movingObj.getScaledHeight() / 2;
+
+      // 회전된 객체도 고려한 중앙 정렬
+      const currentCenter = movingObj.getCenterPoint();
+      movingObj.set({
+        top: movingObj.top + (otherCenter.y - currentCenter.y),
+      });
     }
   }
 };
