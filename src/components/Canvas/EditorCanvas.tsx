@@ -1,5 +1,6 @@
 import { Canvas } from 'fabric';
 import { useEffect, useRef } from 'react';
+import { useAutosave } from '../../hooks/useAutoSave';
 import { useCanvasObjectSync } from '../../hooks/useCanvasObjectSync';
 import { getEditorState } from '../../store/useEditorStore';
 import useToolbarStore from '../../store/useToolbarStore';
@@ -93,6 +94,7 @@ export default function EditorCanvas() {
   }, []);
 
   useCanvasObjectSync(canvas);
+  useAutosave(canvas);
 
   return (
     <canvas
