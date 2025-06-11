@@ -9,8 +9,8 @@ export default function ToolbarManager() {
   const toolbarType = useToolbarStore((state) => state.toolbarType);
   const selectedObjects = useSelectedObjects();
 
-  const showAlignmentToolbar =
-    toolbarType === 'group' || selectedObjects.length >= 2;
+  // 2개 이상 객체가 선택되었을 때만 정렬 툴바 표시
+  const showAlignmentToolbar = selectedObjects.length >= 2;
 
   return (
     <div className='flex items-center'>
