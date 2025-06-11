@@ -1,5 +1,3 @@
-'use client';
-
 import {
   AlignCenter,
   AlignLeft,
@@ -9,7 +7,7 @@ import {
   Minus,
   Plus,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCanvasInstance } from '../Canvas/EditorCanvas';
 import ToolbarButton from './ToolbarButton';
 
@@ -34,62 +32,117 @@ function TextToolbar() {
     'Comic Sans MS',
   ];
 
-  // 선택된 텍스트의 속성을 가져와서 UI에 반영
-  useEffect(() => {
+  // 텍스트 속성 업데이트 함수
+  const updateTextProperty = useCallback(
+    (property: string, value: string | number) => {
+      const canvas = getCanvasInstance();
+      const activeObject = canvas?.getActiveObject();
+
+      if (activeObject && activeObject.type === 'textbox') {
+        activeObject.set(property, value);
+        canvas.requestRenderAll();
+
+        canvas.fire('object:modified');
+      }
+    },
+    [],
+  );
+
+  // 선택된 텍스트의 현재 속성을 UI에 반영
+  const syncTextProperties = useCallback(() => {
     const canvas = getCanvasInstance();
     const activeObject = canvas?.getActiveObject();
 
     if (activeObject && activeObject.type === 'textbox') {
-      // setFontSize(activeObject.fontSize || 22)
-      // setFontFamily(activeObject.fontFamily || "Arial")
-      // setIsBold(activeObject.fontWeight === "bold")
-      // setIsItalic(activeObject.fontStyle === "italic")
-      // setAlignment((activeObject.textAlign as "left" | "center" | "right") || "left")
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      const textObject = activeObject as any;
+
+      setFontSize(textObject.fontSize || 40);
+      setFontFamily(textObject.fontFamily || 'Times New Roman');
+      setIsBold(textObject.fontWeight === 'bold');
+      setIsItalic(textObject.fontStyle === 'italic');
+      setAlignment(
+        (textObject.textAlign as 'left' | 'center' | 'right') || 'left',
+      );
     }
   }, []);
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const updateTextProperty = (property: string, value: any) => {
+  // 텍스트 객체 선택 시 속성 동기화
+  useEffect(() => {
     const canvas = getCanvasInstance();
-    const activeObject = canvas?.getActiveObject();
+    if (!canvas) return;
 
-    if (activeObject && activeObject.type === 'textbox') {
-      activeObject.set(property, value);
-      canvas.requestRenderAll();
-    }
-  };
+    // 선택 변경 시 속성 동기화
+    const handleSelectionChange = () => {
+      syncTextProperties();
+    };
 
-  const handleFontSizeChange = (delta: number) => {
-    const newSize = Math.max(8, Math.min(72, fontSize + delta));
-    setFontSize(newSize);
-    updateTextProperty('fontSize', newSize);
-  };
+    canvas.on('selection:created', handleSelectionChange);
+    canvas.on('selection:updated', handleSelectionChange);
+    canvas.on('selection:cleared', () => {
+      // 선택 해제 시 기본값으로 리셋
+      setFontSize(40);
+      setFontFamily('Times New Roman');
+      setIsBold(false);
+      setIsItalic(false);
+      setAlignment('left');
+    });
 
-  const handleBoldToggle = () => {
+    // 초기 동기화
+    syncTextProperties();
+
+    return () => {
+      canvas.off('selection:created', handleSelectionChange);
+      canvas.off('selection:updated', handleSelectionChange);
+      canvas.off('selection:cleared');
+    };
+  }, [syncTextProperties]);
+
+  // 폰트 크기 변경
+  const handleFontSizeChange = useCallback(
+    (delta: number) => {
+      const newSize = Math.max(8, Math.min(200, fontSize + delta)); // 최대 200
+      setFontSize(newSize);
+      updateTextProperty('fontSize', newSize);
+    },
+    [fontSize, updateTextProperty],
+  );
+
+  // 굵기 토글
+  const handleBoldToggle = useCallback(() => {
     const newBold = !isBold;
     setIsBold(newBold);
     updateTextProperty('fontWeight', newBold ? 'bold' : 'normal');
-  };
+  }, [isBold, updateTextProperty]);
 
-  const handleItalicToggle = () => {
+  // 기울임 토글
+  const handleItalicToggle = useCallback(() => {
     const newItalic = !isItalic;
     setIsItalic(newItalic);
     updateTextProperty('fontStyle', newItalic ? 'italic' : 'normal');
-  };
+  }, [isItalic, updateTextProperty]);
 
-  const handleAlignmentChange = (newAlignment: 'left' | 'center' | 'right') => {
-    setAlignment(newAlignment);
-    updateTextProperty('textAlign', newAlignment);
-  };
+  // 정렬 변경
+  const handleAlignmentChange = useCallback(
+    (newAlignment: 'left' | 'center' | 'right') => {
+      setAlignment(newAlignment);
+      updateTextProperty('textAlign', newAlignment);
+    },
+    [updateTextProperty],
+  );
 
-  const handleFontFamilyChange = (newFont: string) => {
-    setFontFamily(newFont);
-    updateTextProperty('fontFamily', newFont);
-  };
+  // 폰트 패밀리 변경
+  const handleFontFamilyChange = useCallback(
+    (newFont: string) => {
+      setFontFamily(newFont);
+      updateTextProperty('fontFamily', newFont);
+    },
+    [updateTextProperty],
+  );
 
   return (
     <div className='flex items-center gap-1 p-1'>
-      {/* Font Family Selector */}
+      {/* 폰트 패밀리 */}
       <div className='relative'>
         <select
           value={fontFamily}
@@ -103,12 +156,12 @@ function TextToolbar() {
           ))}
         </select>
         <div className='absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none'>
-          {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
           <svg
             className='w-4 h-4 text-gray-400'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
+            aria-hidden='true'
           >
             <path
               strokeLinecap='round'

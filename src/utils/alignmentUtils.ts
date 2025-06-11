@@ -23,6 +23,7 @@ export const alignObjects = (canvas: Canvas, type: AlignType) => {
   }
 
   alignMultipleObjects(canvas, selectedObjects, type);
+  canvas.fire('object:modified');
 };
 
 /**
