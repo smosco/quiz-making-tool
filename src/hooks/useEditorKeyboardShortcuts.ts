@@ -6,6 +6,7 @@ import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
 import { useEditorStore } from '../store/useEditorStore';
 import type { KeyboardCommand } from '../types/keyboard';
 import { group, ungroup } from '../utils/fabricUtils';
+import { saveEditorState } from '../utils/sessionStorage';
 import { useKeyboardShortcuts } from './useKeyboardShotcuts';
 
 export const useEditorKeyboardShortcuts = () => {
@@ -147,6 +148,12 @@ export const useEditorKeyboardShortcuts = () => {
     });
   }, []);
 
+  const handleSave = useCallback(() => {
+    const canvas = getCanvasInstance();
+    saveEditorState(canvas);
+    alert('저장 완료');
+  }, []);
+
   // 클립보드에 데이터가 있는지 확인하는 조건 함수 추가
   const hasClipboard = useCallback(() => {
     return clipboardRef.current !== null;
@@ -221,6 +228,15 @@ export const useEditorKeyboardShortcuts = () => {
         handler: handlePaste,
       },
       condition: hasClipboard, // 클립보드에 데이터가 있을 때만 실행
+    },
+    {
+      id: 'save',
+      shortcut: {
+        key: 's',
+        metaKey: true,
+        description: 'Save Editor State',
+        handler: handleSave,
+      },
     },
     {
       id: 'selectAll',
