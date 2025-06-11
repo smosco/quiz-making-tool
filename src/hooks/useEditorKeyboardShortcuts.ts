@@ -1,4 +1,4 @@
-import { ActiveSelection } from 'fabric';
+import { util, ActiveSelection, Point } from 'fabric';
 import type { FabricObject } from 'fabric';
 import { useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -70,31 +70,80 @@ export const useEditorKeyboardShortcuts = () => {
 
     // 클립보드의 객체를 다시 클론
     clipboardRef.current.clone().then((cloned: FabricObject) => {
-      // 붙여넣을 때 위치를 약간 오프셋
-      cloned.set({
-        left: (cloned.left || 0) + 10,
-        top: (cloned.top || 0) + 10,
-        evented: true,
-        jeiId: uuidv4(),
-        // 클론시 jeiRole이 choicebox인 경우만 유지, choice 또는 없던 경우는 속성 제거
-        jeiRole: cloned.jeiRole === 'choicebox' ? 'choicebox' : undefined,
-      });
-
       // 그룹 객체나 ActiveSelection 처리
       if (cloned.type === 'activeselection') {
-        console.log('여러개 복붙');
-        // TODO(@한현): 여러개 붙여넣기 구현
+        // ActiveSelection의 객체들을 개별적으로 처리
+        // @ts-ignore
+        const objects = cloned.getObjects();
+        const clonedObjects: FabricObject[] = [];
+
+        // 모든 객체를 비동기적으로 클론
+        Promise.all(
+          objects.map(
+            (obj: FabricObject) =>
+              new Promise<FabricObject>((resolve) => {
+                obj.clone().then((clonedObj: FabricObject) => {
+                  // ActiveSelection에서 각 객체의 절대 위치를 계산
+                  // ActiveSelection의 변환 행렬을 사용하여 올바른 절대 좌표 계산
+                  const matrix = cloned.calcTransformMatrix();
+                  const point = util.transformPoint(
+                    new Point(clonedObj.left || 0, clonedObj.top || 0),
+                    matrix,
+                  );
+
+                  clonedObj.set({
+                    left: point.x + 10, // 붙여넣을 때 위치를 약간 오프셋
+                    top: point.y + 10,
+                    evented: true,
+                    jeiId: uuidv4(),
+                    // 클론시 jeiRole이 choicebox인 경우만 유지, choice 또는 없던 경우는 속성 제거
+                    jeiRole:
+                      clonedObj.jeiRole === 'choicebox'
+                        ? 'choicebox'
+                        : undefined,
+                  });
+
+                  resolve(clonedObj);
+                });
+              }),
+          ),
+        ).then((resolvedObjects) => {
+          // 모든 객체를 캔버스에 추가
+          resolvedObjects.forEach((obj: FabricObject) => {
+            canvas.add(obj);
+            clonedObjects.push(obj);
+          });
+
+          // 새로 붙여넣은 모든 객체를 선택
+          if (clonedObjects.length > 1) {
+            const activeSelection = new ActiveSelection(clonedObjects, {
+              canvas: canvas,
+            });
+            canvas.setActiveObject(activeSelection);
+          } else if (clonedObjects.length === 1) {
+            canvas.setActiveObject(clonedObjects[0]);
+          }
+
+          canvas.requestRenderAll();
+        });
       } else {
-        console.log('한개 복붙');
+        // 붙여넣을 때 위치를 약간 오프셋
+        cloned.set({
+          left: (cloned.left || 0) + 10,
+          top: (cloned.top || 0) + 10,
+          evented: true,
+          jeiId: uuidv4(),
+          // 클론시 jeiRole이 choicebox인 경우만 유지, choice 또는 없던 경우는 속성 제거
+          jeiRole: cloned.jeiRole === 'choicebox' ? 'choicebox' : undefined,
+        });
+
         // 일반 객체 추가
         canvas.add(cloned);
+
+        // 새로 붙여넣은 객체를 선택
+        canvas.setActiveObject(cloned);
+        canvas.requestRenderAll();
       }
-
-      // 새로 붙여넣은 객체를 선택
-      canvas.setActiveObject(cloned);
-      canvas.requestRenderAll();
-
-      console.log('Object pasted from clipboard');
     });
   }, []);
 
@@ -201,7 +250,7 @@ export const useEditorKeyboardShortcuts = () => {
 
   return {
     commands,
-    // 추가: 클립보드 상태를 외부에서 확인할 수 있도록 반환
+    // 클립보드 상태를 외부에서 확인할 수 있도록 반환
     hasClipboard: hasClipboard(),
     // 수동으로 복사/붙여넣기를 호출할 수 있도록 함수들도 반환
     handleCopy,
