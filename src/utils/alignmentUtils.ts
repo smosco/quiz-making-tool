@@ -8,6 +8,12 @@ export type AlignType =
   | 'middle'
   | 'bottom';
 
+/**
+ * 선택된 객체들 정렬하는 함수
+ *
+ * @param {Canvas} canvas
+ * @param {AlignType} type
+ */
 export const alignObjects = (canvas: Canvas, type: AlignType) => {
   const objects = canvas.getActiveObjects();
   if (objects.length < 2) return;

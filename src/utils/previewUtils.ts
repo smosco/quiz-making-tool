@@ -2,7 +2,12 @@ import type { Canvas, Group, Rect } from 'fabric';
 import { util } from 'fabric';
 import { usePreviewStore } from '../store/usePreviewStore';
 
-// 펄스 애니메이션 (선택 시)
+/**
+ * 펄스 애니메이션 생성(선택)
+ *
+ * @param {Group} group
+ * @param {Canvas} canvas
+ */
 const createPulseAnimation = (group: Group, canvas: Canvas) => {
   const originalScaleX = group.scaleX || 1;
   const originalScaleY = group.scaleY || 1;
@@ -33,7 +38,12 @@ const createPulseAnimation = (group: Group, canvas: Canvas) => {
   );
 };
 
-// 성공 애니메이션 (정답 시)
+/**
+ * 성공 애니메이션 생성 (정답)
+ *
+ * @param {Group} group
+ * @param {Canvas} canvas
+ */
 const createSuccessAnimation = (group: Group, canvas: Canvas) => {
   const originalScaleX = group.scaleX || 1;
   const originalScaleY = group.scaleY || 1;
@@ -83,7 +93,12 @@ const createSuccessAnimation = (group: Group, canvas: Canvas) => {
   );
 };
 
-// 실패 애니메이션 (오답 시)
+/**
+ * 실패 애니메이션 생성 (오답)
+ *
+ * @param {Group} group
+ * @param {Canvas} canvas
+ */
 const createFailAnimation = (group: Group, canvas: Canvas) => {
   const originalLeft = group.left || 0;
   const originalAngle = group.angle || 0;
@@ -132,7 +147,11 @@ const createFailAnimation = (group: Group, canvas: Canvas) => {
   shake();
 };
 
-// 메인 함수: 시각적 스타일 업데이트 + 애니메이션
+/**
+ * 프리뷰 캔버스에서 선택, 정답, 오답 여부에 따라 시각적 피드백 주는 함수
+ *
+ * @param {Canvas} canvas
+ */
 export const updateVisualStyle = (canvas: Canvas) => {
   const { selectedIds, correctIds, submitted } = usePreviewStore.getState();
 
@@ -180,52 +199,4 @@ export const updateVisualStyle = (canvas: Canvas) => {
   });
 
   canvas.requestRenderAll();
-};
-
-// 전체 결과 애니메이션 (모든 문제를 맞췄을 때)
-export const createCelebrationAnimation = (canvas: Canvas) => {
-  const objects = canvas.getObjects();
-  let animationIndex = 0;
-
-  const animateNext = () => {
-    if (animationIndex >= objects.length) return;
-
-    const obj = objects[animationIndex];
-    if (obj.type === 'group' && (obj as Group).jeiRole === 'choice') {
-      const group = obj as Group;
-      const originalScaleX = group.scaleX || 1;
-      const originalScaleY = group.scaleY || 1;
-
-      // 순차적으로 통통 튀는 애니메이션
-      setTimeout(() => {
-        group.animate(
-          {
-            scaleY: originalScaleY * 1.3,
-          },
-          {
-            duration: 200,
-            easing: util.ease.easeOutQuad,
-            onChange: () => canvas.requestRenderAll(),
-            onComplete: () => {
-              group.animate(
-                {
-                  scaleY: originalScaleY,
-                },
-                {
-                  duration: 300,
-                  easing: util.ease.easeOutBounce,
-                  onChange: () => canvas.requestRenderAll(),
-                },
-              );
-            },
-          },
-        );
-      }, animationIndex * 100);
-    }
-
-    animationIndex++;
-    setTimeout(animateNext, 50);
-  };
-
-  animateNext();
 };

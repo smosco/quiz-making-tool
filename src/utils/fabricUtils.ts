@@ -10,7 +10,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { getCanvasInstance } from '../components/Canvas/EditorCanvas';
 import { useEditorStore } from '../store/useEditorStore';
 
-// 캔버스에 Textbox 추가
+/**
+ * 캔버스에 텍스트 박스 추가
+ */
 export const addTextboxToCanvas = async () => {
   const canvas = getCanvasInstance();
   if (!canvas) return;
@@ -29,7 +31,9 @@ export const addTextboxToCanvas = async () => {
   canvas.requestRenderAll();
 };
 
-// 캔버스에 Rect 추가
+/**
+ * 캔버스에 choicebox 추가
+ */
 export const addRectToCanvas = async () => {
   const canvas = getCanvasInstance();
   if (!canvas) return;
@@ -56,7 +60,9 @@ export const addRectToCanvas = async () => {
   canvas.requestRenderAll();
 };
 
-// 선택된 객체 그룹화
+/**
+ * 선택된 객체 그룹화
+ */
 export const group = async () => {
   const canvas = getCanvasInstance();
   if (!canvas) return;
@@ -113,7 +119,9 @@ export const group = async () => {
   }
 };
 
-// 그룹해제
+/**
+ * 그룹 해제
+ */
 // https://github.com/fabricjs/fabric.js/issues/9990 버그 리포트 참고
 export const ungroup = () => {
   const canvas = getCanvasInstance();
@@ -154,7 +162,9 @@ export const ungroup = () => {
   canvas.requestRenderAll();
 };
 
-// 캡처 함수
+/**
+ * 캡처 함수
+ */
 export const captureSingleObject = (canvas: Canvas, target: FabricObject) => {
   const others = canvas.getObjects().filter((obj) => obj !== target);
 

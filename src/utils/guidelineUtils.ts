@@ -8,7 +8,15 @@ export const GUIDELINE_STROKE_WIDTH = 1;
 // 가이드라인 저장 배열
 let guidelines: Line[] = [];
 
-// 가이드라인 생성
+/**
+ * 가이드라인 생성
+ *
+ * @param {boolean} isVertical
+ * @param {{ x: number; y: number }} canvasCenter
+ * @param {number} canvasWidth
+ * @param {number} canvasHeight
+ * @returns {Line}
+ */
 export const createGuideline = (
   isVertical: boolean,
   canvasCenter: { x: number; y: number },
@@ -29,7 +37,11 @@ export const createGuideline = (
   });
 };
 
-// 가이드라인 제거
+/**
+ * 가이드라인 제거
+ *
+ * @param {Canvas} canvas
+ */
 export const clearLines = (canvas: Canvas) => {
   guidelines.forEach((line) => {
     if (canvas.contains(line)) {
@@ -40,13 +52,23 @@ export const clearLines = (canvas: Canvas) => {
   canvas.requestRenderAll();
 };
 
-// 가이드라인 추가
+/**
+ * 캔버스에 가이드라인 추가
+ *
+ * @param {Canvas} canvas
+ * @param {Line} line
+ */
 export const addGuideline = (canvas: Canvas, line: Line) => {
   canvas.add(line);
   guidelines.push(line);
 };
 
-// 메인 가이드라인 로직
+/**
+ * 객체가 이동할 때 캔버스에 중앙정렬 가이드 라인을 그리고 스냅하는 함수
+ *
+ * @param {Canvas} canvas
+ * @param {*} e
+ */
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const handleObjectMoving = (canvas: Canvas, e: any) => {
   if (!e.target) return;

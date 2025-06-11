@@ -10,7 +10,9 @@ const isSVGExtension = (extension: string): boolean => {
   return SVG_EXTENSIONS.includes(extension.toLowerCase());
 };
 
-// SVG를 캔버스에 추가
+/**
+ * svg를 캔버스에 추가
+ */
 const addSVGToCanvas = async (url: string) => {
   const canvas = getCanvasInstance();
   if (!canvas) return;
@@ -65,7 +67,9 @@ const addSVGToCanvas = async (url: string) => {
   }
 };
 
-// 일반 이미지(PNG, JPG 등)를 캔버스에 추가
+/**
+ * 일반 이미지(PNG, JPG 등)를 캔버스에 추가
+ */
 const addRasterImageToCanvas = async (url: string) => {
   const canvas = getCanvasInstance();
   if (!canvas) return;
@@ -113,7 +117,9 @@ const addRasterImageToCanvas = async (url: string) => {
   }
 };
 
-// 메인 함수: 확장자에 따라 적절한 방식으로 이미지 추가
+/**
+ * 메인 함수: 확장자에 따라 적절한 방식으로 이미지 추가
+ */
 export const addImageToCanvas = async (url: string, extension?: string) => {
   let fileExtension = extension;
   if (!fileExtension) {
@@ -129,9 +135,4 @@ export const addImageToCanvas = async (url: string, extension?: string) => {
     // console.log('래스터 이미지로 로드합니다:', url);
     await addRasterImageToCanvas(url);
   }
-};
-
-// 기존 호환성을 위한 함수 (deprecated)
-export const addImageToCanvasLegacy = async (url: string) => {
-  await addRasterImageToCanvas(url);
 };
