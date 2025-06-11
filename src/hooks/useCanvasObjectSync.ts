@@ -7,7 +7,7 @@ interface FabricEvent {
   e?: Event;
 }
 
-export const useCanvasObjectSync = (canvas: Canvas) => {
+export const useCanvasObjectSync = (canvas: Canvas | null) => {
   const { updateOptionImage } = useEditorStore();
 
   useEffect(() => {
