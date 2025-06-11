@@ -216,6 +216,9 @@ const alignGroupObjects = (
   // 그룹의 경계 박스 업데이트
   group.setCoords();
   canvas.requestRenderAll();
+
+  // 캔버스에 직접 정렬 이벤트 발생 시킴
+  canvas.fire('object:modified', { target: group });
 };
 
 /**
