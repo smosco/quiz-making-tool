@@ -7,6 +7,7 @@ import {
   useEditorStore,
   useOptions,
 } from '../../store/useEditorStore';
+import { triggerCanvasAutoSave } from '../Canvas/EditorCanvas';
 import OptionItem from './OptionItem';
 import OptionPlusButton from './OptionPlusButton';
 
@@ -23,6 +24,24 @@ export default function OptionPanel() {
       setMode: state.setMode,
     })),
   );
+
+  // 모드 변경 후 자동저장 트리거
+  const handleModeChange = (newMode: 'unit' | 'multi') => {
+    setMode(newMode);
+    triggerCanvasAutoSave('mode-changed');
+  };
+
+  // 정답 토글 후 자동저장 트리거
+  const handleToggleAnswer = (optionId: string) => {
+    toggleAnswer(optionId);
+    triggerCanvasAutoSave('answer-toggled');
+  };
+
+  // 옵션 제거 후 자동저장 트리거
+  const handleRemoveOption = (optionId: string) => {
+    removeOption(optionId);
+    triggerCanvasAutoSave('option-removed');
+  };
 
   return (
     <div className='h-full flex flex-col'>
@@ -42,7 +61,7 @@ export default function OptionPanel() {
           <div className='flex gap-2'>
             <button
               type='button'
-              onClick={() => setMode('unit')}
+              onClick={() => handleModeChange('unit')} // 🔥 수정된 핸들러
               className={`px-3 py-2 text-sm rounded-md font-medium transition-colors ${
                 mode === 'unit'
                   ? 'bg-blue-100 text-blue-700 border border-blue-200'
@@ -53,7 +72,7 @@ export default function OptionPanel() {
             </button>
             <button
               type='button'
-              onClick={() => setMode('multi')}
+              onClick={() => handleModeChange('multi')} // 🔥 수정된 핸들러
               className={`px-3 py-2 text-sm rounded-md font-medium transition-colors ${
                 mode === 'multi'
                   ? 'bg-blue-100 text-blue-700 border border-blue-200'
@@ -91,8 +110,8 @@ export default function OptionPanel() {
                   key={opt.id}
                   option={opt}
                   index={index}
-                  onToggleAnswer={toggleAnswer}
-                  onRemove={removeOption}
+                  onToggleAnswer={handleToggleAnswer} // 🔥 수정된 핸들러
+                  onRemove={handleRemoveOption} // 🔥 수정된 핸들러
                 />
               ))}
             </div>

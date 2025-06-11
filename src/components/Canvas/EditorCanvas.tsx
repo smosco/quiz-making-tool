@@ -9,6 +9,14 @@ import { clearLines, handleObjectMoving } from '../../utils/guidelineUtils';
 let canvas: Canvas;
 export const getCanvasInstance = () => canvas;
 
+let triggerAutoSave: ((reason?: string) => void) | null = null;
+
+export const triggerCanvasAutoSave = (reason?: string) => {
+  if (triggerAutoSave) {
+    triggerAutoSave(reason);
+  }
+};
+
 export default function EditorCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -88,13 +96,20 @@ export default function EditorCanvas() {
     }
 
     return () => {
+      triggerAutoSave = null;
       clearLines(canvas);
       canvas.dispose();
     };
   }, []);
 
   useCanvasObjectSync(canvas);
-  useAutosave(canvas);
+
+  // 자동저장 훅 사용 및 triggerSave 함수 저장
+  const { triggerSave } = useAutosave(canvas);
+
+  useEffect(() => {
+    triggerAutoSave = triggerSave; // 전역에서 사용할 수 있도록 저장
+  }, [triggerSave]);
 
   return (
     <canvas

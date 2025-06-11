@@ -30,10 +30,11 @@ export const useAutosave = (canvas: Canvas | null, delay = 3000) => {
     delay,
   ]);
 
-  useEffect(() => {
-    if (!canvas) return;
-
-    const handleChange = () => {
+  /**
+   * 외부에서 자동저장을 트리거할 수 있는 함수
+   */
+  const triggerSave = useCallback(
+    (reason?: string) => {
       if (!isInitializedRef.current) {
         isInitializedRef.current = true;
         return;
@@ -41,6 +42,19 @@ export const useAutosave = (canvas: Canvas | null, delay = 3000) => {
 
       hasChangesRef.current = true;
       debouncedSave();
+
+      if (reason) {
+        console.log(`자동저장 트리거: ${reason}`);
+      }
+    },
+    [debouncedSave],
+  );
+
+  useEffect(() => {
+    if (!canvas) return;
+
+    const handleCanvasChange = () => {
+      triggerSave('canvas-change');
     };
 
     const events: FabricCanvasEvent[] = [
@@ -57,7 +71,7 @@ export const useAutosave = (canvas: Canvas | null, delay = 3000) => {
 
     // 모든 이벤트에 동일한 핸들러 적용
     events.forEach((event) => {
-      canvas.on(event, handleChange);
+      canvas.on(event, handleCanvasChange);
     });
 
     // 페이지 이탈 시 즉시 저장
@@ -80,18 +94,18 @@ export const useAutosave = (canvas: Canvas | null, delay = 3000) => {
     return () => {
       // 이벤트 정리
       events.forEach((event) => {
-        canvas.off(event, handleChange);
+        canvas.off(event, handleCanvasChange);
       });
 
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       debouncedSave.cancel();
     };
-  }, [canvas, debouncedSave]);
+  }, [canvas, triggerSave]);
 
   return {
     save: () => debouncedSave.flush(),
-    cancel: () => debouncedSave.cancel(),
+    triggerSave,
     hasUnsavedChanges: hasChangesRef.current,
   };
 };
