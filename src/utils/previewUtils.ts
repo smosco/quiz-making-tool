@@ -153,7 +153,11 @@ const createFailAnimation = (group: Group, canvas: Canvas) => {
  * @param {Canvas} canvas
  */
 export const updateVisualStyle = (canvas: Canvas) => {
-  const { selectedIds, correctIds, submitted } = usePreviewStore.getState();
+  const { selectedIds, correctIds, submitted, mode, getIsCorrect } =
+    usePreviewStore.getState();
+
+  // 전체 정답 여부 확인 (다중선택 모드에서 필요)
+  const isAllCorrect = getIsCorrect();
 
   canvas.getObjects().forEach((obj) => {
     if (obj.type !== 'group') return;
@@ -166,7 +170,7 @@ export const updateVisualStyle = (canvas: Canvas) => {
     if (!group.jeiId) return;
 
     const isSelected = selectedIds.includes(group.jeiId);
-    const isCorrect = correctIds.includes(group.jeiId);
+    const isCorrectChoice = correctIds.includes(group.jeiId);
 
     if (!submitted) {
       // 제출 전: 선택/미선택 상태
@@ -180,19 +184,34 @@ export const updateVisualStyle = (canvas: Canvas) => {
     } else {
       // 제출 후: 정답/오답 결과 표시
       if (!isSelected) {
-        // 선택되지 않은 항목들
+        // 선택되지 않은 항목들 - 모두 동일하게 처리
         border.set('stroke', '#E5E7EB');
         border.set('opacity', 0.4);
       } else {
         // 선택된 항목들
-        border.set('stroke', isCorrect ? '#10B981' : '#EF4444');
-        border.set('opacity', 1);
+        if (mode === 'unit') {
+          // 단일선택: 개별 선택지의 정답 여부로 판단
+          border.set('stroke', isCorrectChoice ? '#10B981' : '#EF4444');
+          border.set('opacity', 1);
 
-        // 애니메이션 실행
-        if (isCorrect) {
-          createSuccessAnimation(group, canvas);
+          if (isCorrectChoice) {
+            createSuccessAnimation(group, canvas);
+          } else {
+            createFailAnimation(group, canvas);
+          }
         } else {
-          createFailAnimation(group, canvas);
+          // 다중선택: 전체 정답 여부로 판단
+          if (isAllCorrect) {
+            // 모든 선택이 맞은 경우: 선택된 모든 항목에 성공 애니메이션
+            border.set('stroke', '#10B981');
+            border.set('opacity', 1);
+            createSuccessAnimation(group, canvas);
+          } else {
+            // 일부 틀린 경우: 선택된 모든 항목에 실패 애니메이션
+            border.set('stroke', '#EF4444');
+            border.set('opacity', 1);
+            createFailAnimation(group, canvas);
+          }
         }
       }
     }
