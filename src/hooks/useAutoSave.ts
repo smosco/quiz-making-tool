@@ -43,9 +43,9 @@ export const useAutosave = (canvas: Canvas | null, delay = 1000) => {
       hasChangesRef.current = true;
       debouncedSave();
 
-      if (reason) {
-        console.log(`자동저장 트리거: ${reason}`);
-      }
+      // if (reason) {
+      //   console.log(`자동저장 트리거: ${reason}`);
+      // }
     },
     [debouncedSave],
   );

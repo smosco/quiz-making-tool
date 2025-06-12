@@ -2,7 +2,6 @@ import type { Canvas } from 'fabric';
 import { getEditorState } from '../store/useEditorStore';
 
 export const saveEditorState = (canvas: Canvas) => {
-  console.log('진짜 저장됨', new Date());
   // fabric 객체 JSON으로 저장
   const fabricJson = canvas.toObject(['jeiId', 'jeiRole']);
   sessionStorage.setItem('fabricData', JSON.stringify(fabricJson));
