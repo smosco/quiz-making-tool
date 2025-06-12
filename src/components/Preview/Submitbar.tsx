@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, CheckCircle, RotateCcw } from 'lucide-react';
+import { CheckCircle, RotateCcw } from 'lucide-react';
 import {
   usePreviewMode,
   usePreviewStore,
@@ -64,10 +64,6 @@ function SubmitBar() {
           다시풀기 ({3 - retryCount}회 남음)
         </button>
       </div>
-      {/* 재시도 횟수 표시 */}
-      {retryCount > 0 && (
-        <div className='text-xs text-gray-500'>시도 횟수: {retryCount}/3</div>
-      )}
     </div>
   );
 }

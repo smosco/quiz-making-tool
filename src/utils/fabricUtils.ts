@@ -41,8 +41,8 @@ export const addRectToCanvas = async () => {
   const fabricRect = new Rect({
     left: 100,
     top: 100,
-    width: 56,
-    height: 56,
+    width: 120,
+    height: 120,
     fill: 'transparent',
     strokeWidth: 2,
     stroke: '#e5e7eb',

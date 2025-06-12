@@ -9,7 +9,7 @@ type FabricCanvasEvent =
   | 'object:modified'
   | 'text:changed';
 
-export const useAutosave = (canvas: Canvas | null, delay = 3000) => {
+export const useAutosave = (canvas: Canvas | null, delay = 1000) => {
   const isInitializedRef = useRef(false);
   const hasChangesRef = useRef(false);
 
